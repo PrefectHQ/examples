@@ -11,3 +11,7 @@ These examples are intentionally lightweight starting points rather than complet
 We should track success through:
 - Team contribution frequency: Regular sharing of solutions from user interactions
 - Internal adoption: Reuse of examples across different user scenarios
+
+## Development
+
+This repository uses [uv](https://docs.astral.sh/uv/) for dependency management. To set up pre-commit checks, run `uvx pre-commit`.
