@@ -1083,17 +1083,33 @@ wheels = [
 ]
 
 [[package]]
+name = "prefect-docker"
+version = "0.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "docker" },
+    { name = "exceptiongroup" },
+    { name = "prefect" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/de/05/49028ca974fb705041cc6c2c98cd8f9a183b736dba6950b6f3c3e5a13a2f/prefect_docker-0.6.1.tar.gz", hash = "sha256:cfbcc501730c2ee3ae8e4b446349bcdfce1198c38d75816a115106cba18cc100", size = 33735 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/04/8b/a725e4c5c7a935ab88261546947efbe915adee814a1799ef018131fca8cd/prefect_docker-0.6.1-py3-none-any.whl", hash = "sha256:f7c8b89ebc51e2c10442c19303ca0bd00d6a402700f9be702cde00c424e3c056", size = 23655 },
+]
+
+[[package]]
 name = "prefect-examples"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "prefect" },
+    { name = "prefect-docker" },
     { name = "psutil" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "prefect", specifier = ">=3.1.2" },
+    { name = "prefect-docker", specifier = ">=0.6.1" },
     { name = "psutil", specifier = ">=6.1.0" },
 ]
 
