@@ -36,7 +36,7 @@ def deploy():
         source="./flows",
         entrypoint="hello-world.py:hello",
     ).deploy(
-        name="default",
+        name="source-docker",
         # The name of the work pool to use for this deployment
         work_pool_name="docker",
         image=DockerImage(
