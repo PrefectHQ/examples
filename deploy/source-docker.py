@@ -33,7 +33,7 @@ def get_image_tag():
 
 def deploy():
     flow.from_source(
-        source="./basics",
+        source="./flows",
         entrypoint="hello-world.py:hello",
     ).deploy(
         name="default",
