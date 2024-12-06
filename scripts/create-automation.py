@@ -101,7 +101,7 @@ if __name__ == "__main__":
             "email",
             "flow-failure-emails",
             data={
-                "emails": ["emil@prefect.io"],
+                "emails": ["me@example.com"],
             },
             overwrite=True,
         )
