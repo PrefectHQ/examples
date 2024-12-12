@@ -46,6 +46,7 @@ def deploy():
             tag=get_image_tag(),
             # Autogenerate a Dockerfile based on the installed Prefect version
             # This pulls in requirements.txt if present
+            # Alternatively you can specify a Dockerfile path: dockerfile="path/to/Dockerfile"
             dockerfile="auto",
             # When building on an M series Mac and deploying to a cloud provider,
             # we generally need to specify the platform.
@@ -58,7 +59,7 @@ def deploy():
         # Override work pool defaults with job variables
         # For example, avoid pulling from the registry if we're building locally
         job_variables={
-            "pull_policy": "Always" if REGISTRY_URL else "Never",
+            "image_pull_policy": "Always" if REGISTRY_URL else "Never",
         },
     )
 
