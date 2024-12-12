@@ -37,7 +37,6 @@ def whoami():
         "Python": sys.version,
         "Prefect": prefect.__version__,
         "Hostname": socket.gethostname(),
-        "Address": httpx.get("https://api.ipify.org").text,
         "User": os.getenv("USER"),
         "CWD": os.getcwd(),
         "CPUs": os.cpu_count(),
