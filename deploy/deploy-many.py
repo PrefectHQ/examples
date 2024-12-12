@@ -1,5 +1,11 @@
 """
 An example of discovering and deploying multiple flows from a directory.
+
+The interesting bits are:
+1. Our `deploy_flow` function is simple, but this is where you can really go crazy defining a standard pattern.
+2. We use `OVERRIDES` to define the inevitable deviations from our standard pattern.
+3. Prefect's built-in `_search_for_flow_functions` does the heavy lifting of identifying flows in files.
+4. We wrap the whole thing in a CLI with some logic around inclusion and exclusion of files.
 """
 
 import asyncio
