@@ -23,7 +23,6 @@ import os
 import platform
 import socket
 
-import httpx
 import prefect
 
 
