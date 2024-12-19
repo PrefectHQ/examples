@@ -24,23 +24,29 @@ OVERRIDES: dict[str, dict] = {
     }
 }
 
+# Maximum number of flows to deploy concurrently
+# Currently flow.from_source does not appear threadsafe
+# https://github.com/PrefectHQ/prefect/issues/16452
+MAX_CONCURRENCY = 1
 
-async def deploy_flow(entrypoint: str):
+
+async def deploy_flow(entrypoint: str, semaphore: asyncio.BoundedSemaphore):
     """
     Deploy the flow with common settings.
     """
     try:
-        _flow = await flow.from_source(
-            source=GitRepository(
-                url="https://github.com/PrefectHQ/examples.git",
-            ),
-            entrypoint=entrypoint,
-        )
-        deployment_id = await _flow.deploy(
-            name="deploy-many",
-            work_pool_name="process",
-            **OVERRIDES.get(entrypoint, {}),
-        )
+        async with semaphore:
+            _flow = await flow.from_source(
+                source=GitRepository(
+                    url="https://github.com/PrefectHQ/examples.git",
+                ),
+                entrypoint=entrypoint,
+            )
+            deployment_id = await _flow.deploy(
+                name="deploy-many",
+                work_pool_name="process",
+                **OVERRIDES.get(entrypoint, {}),
+            )
         print(f"Deployed flow {entrypoint} with deployment ID {deployment_id}")
     except Exception as e:
         print(f"Error deploying flow {entrypoint}")
@@ -84,6 +90,9 @@ async def _deploy(
 
     deployable = await filter_flow_functions(flow_functions, include, exclude)
 
+    # Concurrency control
+    semaphore = asyncio.BoundedSemaphore(MAX_CONCURRENCY)
+
     print(f"Deploying {len(deployable)} flows.")
     _deployments = []
     for flow_function in deployable:
@@ -92,23 +101,24 @@ async def _deploy(
             f"Deploying flow {flow_function['function_name']} from {flow_function['filepath']}"
         )
         _deployment = deploy_flow(
-            entrypoint=f"{flow_function['filepath']}:{flow_function['function_name']}"
+            entrypoint=f"{flow_function['filepath']}:{flow_function['function_name']}",
+            semaphore=semaphore,
         )
         _deployments.append(_deployment)
 
     # Wait for all deployments to complete
-    result = await asyncio.gather(*_deployments)
+    results = await asyncio.gather(*_deployments)
 
     # Summarize the results
-    failed = [r for r in result if isinstance(r, Exception)]
-
-    if any(failed):
-        print(f"\nFailed to deploy {len(failed)} of {len(result)} flows.")
-        for f in failed:
-            print(f"\nError deploying flow: {f}")
-
-    else:
-        print(f"\nSuccessfully deployed {len(result)} flows.")
+    for idx, (flow_function, result) in enumerate(zip(deployable, results)):
+        if isinstance(result, Exception):
+            print(
+                f"[{idx + 1}] ❌ {flow_function['filepath']}:{flow_function['function_name']}: {result}"
+            )
+        else:
+            print(
+                f"[{idx + 1}] ✅ {flow_function['filepath']}:{flow_function['function_name']}"
+            )
 
 
 def deploy(
