@@ -52,9 +52,8 @@ resource "prefect_webhook" "target_webhook" {
     data = "{{ body }}"
   })
 
-  // https://github.com/PrefectHQ/terraform-provider-prefect/issues/346
-  // service_account_id = prefect_service_account.service_account.id
-  workspace_id = data.prefect_workspace.target.id
+  service_account_id = prefect_service_account.service_account.id
+  workspace_id       = data.prefect_workspace.target.id
 }
 
 resource "prefect_block" "source_webhook_block" {

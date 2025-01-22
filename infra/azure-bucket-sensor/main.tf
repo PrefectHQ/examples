@@ -84,6 +84,13 @@ resource "azurerm_eventgrid_event_subscription" "event_subscription" {
     url = prefect_webhook.target_webhook.endpoint
   }
 
+  delivery_property {
+    header_name = "Authorization"
+    value        = "Bearer ${prefect_service_account.service_account.api_key}"
+    type         = "Static"
+    secret       = true
+  }
+
   retry_policy {
     max_delivery_attempts = 5
     event_time_to_live    = 1440
