@@ -12,8 +12,16 @@ import asyncio
 from pathlib import Path
 
 import typer
-from prefect import flow
-from prefect.deployments.base import _search_for_flow_functions
+from prefect import flow, __version__
+
+# NOTE: The import path changed in 3.1.11
+if tuple(map(int, __version__.split("."))) < (3, 1, 11):
+    from prefect.deployments.base import _search_for_flow_functions
+else:
+    from prefect.cli._prompts import (
+        search_for_flow_functions as _search_for_flow_functions,
+    )
+
 from prefect.runner.storage import GitRepository
 
 # Optional overrides for each flow as identified by the entrypoint
