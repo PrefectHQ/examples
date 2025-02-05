@@ -3,9 +3,9 @@ Demonstrates directly returning a state. In this case, an AwaitingRetry state
 which causes a task to be retried after a delay.
 """
 
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, timedelta, timezone
 
-from prefect import task, get_run_logger
+from prefect import get_run_logger, task
 from prefect.context import get_run_context
 from prefect.states import AwaitingRetry
 
@@ -25,7 +25,7 @@ def main():
 
     # Schedule the task to run again in {retry_after} seconds
     return AwaitingRetry(
-        scheduled_time=datetime.now(UTC) + timedelta(seconds=retry_after)
+        scheduled_time=datetime.now(timezone.utc) + timedelta(seconds=retry_after)
     )
 
 
