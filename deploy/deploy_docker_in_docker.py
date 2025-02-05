@@ -21,11 +21,11 @@ export PREFECT_API_URL=`python -c "from prefect.settings import PREFECT_API_URL 
 export PREFECT_API_KEY=`python -c "from prefect.settings import PREFECT_API_KEY as x; print(x.value())"`
 
 docker run -it --rm \
-    -v $(pwd)/deploy/deploy-docker-in-docker.py:/tmp/deploy-docker-in-docker.py \
+    -v $(pwd)/deploy/deploy_docker_in_docker.py:/tmp/deploy_docker_in_docker.py \
     -e PREFECT_API_URL=$PREFECT_API_URL \
     -e PREFECT_API_KEY=$PREFECT_API_KEY \
     flow-hello-world:latest \
-    python /tmp/deploy-docker-in-docker.py /opt/custom/path/to/hello-world.py:hello
+    python /tmp/deploy_docker_in_docker.py /opt/custom/path/to/hello-world.py:hello
 ```
 """
 

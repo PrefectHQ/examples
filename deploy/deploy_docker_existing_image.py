@@ -17,7 +17,7 @@ docker build -f Dockerfile -t flow-hello-world:latest .
 Then run this script and start a worker:
 
 ```bash
-python deploy/deploy-docker-existing-image.py
+python deploy/deploy_docker_existing_image.py
 prefect worker start --pool docker --type docker
 ```
 """
