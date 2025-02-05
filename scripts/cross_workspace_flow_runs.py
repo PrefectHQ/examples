@@ -3,7 +3,7 @@ This script lists flow run counts by state and date for all workspaces in an acc
 
 The output can be piped to a CSV file for further analysis. For example:
 ```bash
-uv run --python 3.12 --with prefect python scripts/cross-workspace-flow-runs.py -a $ACCOUNT_ID > flow-runs.csv
+uv run --python 3.12 --with prefect python scripts/cross_workspace_flow_runs.py -a $ACCOUNT_ID > flow-runs.csv
 
 uvx duckdb -c "select state, sum(flow_runs) from read_csv('./flow-runs.csv') group by 1 order by 2 desc"
 ```
