@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["prefect", "httpx"]
+# dependencies = ["prefect"]
 # ///
 
 """
