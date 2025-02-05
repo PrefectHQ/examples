@@ -4,11 +4,6 @@ version = "0.1.0"
 description = "Examples of how to use Prefect"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = [
-    "prefect-docker>=0.6.1",
-    "prefect>=3.1.2",
-    "psutil>=6.1.0",
-]
 
 [project.urls]
 Code = "https://github.com/PrefectHQ/examples"

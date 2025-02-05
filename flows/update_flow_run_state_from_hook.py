@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 Demonstrates using the client to update flow run state from a hook.
 """

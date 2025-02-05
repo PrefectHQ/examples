@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect", "psutil"]
+# ///
+
 """
 This script is used to force an out-of-memory error in a Prefect flow.
 
