@@ -7,6 +7,8 @@ This example shows how to bind specific parameters to a schedule.
 
 We check the price of BTC and ETH at an interval of 10 seconds, and the price of SOL and
 DOGE according to a cron schedule.
+
+The `prefect.schedules` module is available in `prefect>=3.1.16`.
 """
 
 from datetime import timedelta
