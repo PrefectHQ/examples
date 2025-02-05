@@ -9,7 +9,7 @@ Demonstrates using the client to post-hoc update flow run state using the client
 from uuid import UUID
 
 from prefect import flow, get_client
-from prefect.client.schemas import State, StateType
+from prefect.states import State, StateType
 
 
 def fail_anyway(flow_run_id: UUID):
