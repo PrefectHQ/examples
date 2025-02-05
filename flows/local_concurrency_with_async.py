@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """Implement extract flow using Python native async concurrency"""
 
 import asyncio

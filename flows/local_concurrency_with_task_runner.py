@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """Implements a data extract flow using task runner concurrency"""
 
 from typing import Any

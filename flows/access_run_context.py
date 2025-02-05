@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 Examples of accessing Prefect's runtime context to get information about the current flow run:
 - List the fields in the context

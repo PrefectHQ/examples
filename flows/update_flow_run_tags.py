@@ -1,8 +1,12 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 Demonstrates using the client to update flow run tags.
 """
 
-from prefect import flow, get_run_logger, get_client, tags
+from prefect import flow, get_client, get_run_logger, tags
 from prefect.context import get_run_context
 
 

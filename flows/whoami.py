@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 This flow will log information about the current environment. Use it to
 diagnose issues with your environment, especially when deploying to
@@ -18,10 +22,10 @@ flow.from_source(
 ```
 """
 
-import sys
 import os
 import platform
 import socket
+import sys
 
 import prefect
 

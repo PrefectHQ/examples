@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 Demonstrates directly returning a state. In this case, an AwaitingRetry state
 which causes a task to be retried after a delay.
