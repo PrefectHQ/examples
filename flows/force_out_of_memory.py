@@ -5,15 +5,15 @@ Use it to reproduce and diagnose memory issues.
 """
 
 import os
-import psutil
+from logging import Logger, LoggerAdapter
 
+import psutil
 from prefect import flow, get_run_logger
 
-MEGABYTE = 10**6
+MEGABYTE: int = 10**6
 
 
-def log_memory_usage(process, logger):
-    logger = get_run_logger()
+def log_memory_usage(process: psutil.Process, logger: Logger | LoggerAdapter) -> None:
     mem_stats = psutil.virtual_memory()
     mem_process = process.memory_info().rss / MEGABYTE
     logger.info(

@@ -1,7 +1,10 @@
 """Implements a data extract flow using task runner concurrency"""
 
+from typing import Any
+
 import httpx
 from prefect import flow, get_run_logger, tags, task, unmapped
+from prefect.futures import as_completed
 from prefect.task_runners import ThreadPoolTaskRunner
 
 BASE_URL = "https://dev.to/api"
@@ -12,7 +15,7 @@ CONCURRENCY = 10
     retries=3,
     retry_delay_seconds=[10, 30, 60],
 )
-def fetch_url(url: str, params: dict | None = None) -> dict:
+def fetch_url(url: str, params: dict | None = None) -> dict[str, Any]:
     """Generic task for fetching a URL"""
     get_run_logger().info(f"Fetching {url}")
     response = httpx.get(url, params=params)
@@ -27,11 +30,10 @@ def list_articles(pages: int, per_page: int = 10) -> list[str]:
     _pages = fetch_url.map(
         unmapped(f"{BASE_URL}/articles"),
         [{"page": page, "per_page": per_page} for page in range(1, pages + 1)],
-    )
-    pages = [_page.result() for _page in _pages]
+    ).result()
 
     return [
-        f"{BASE_URL}/articles/{article['id']}" for page in pages for article in page
+        f"{BASE_URL}/articles/{article['id']}" for page in _pages for article in page
     ]
 
 
@@ -44,7 +46,7 @@ def extract(pages: int) -> None:
 
     # Log the title of each article as they become ready
     # alternatively, _articles.wait() will wait for all articles
-    for _article in _articles:
+    for _article in as_completed(_articles):
         get_run_logger().info(_article.result()["title"])
 
 
