@@ -14,7 +14,7 @@ uv run flows/hello_world.py
 If you haven't, you can point `uv run` at the url of the python file, for example:
 
 ```bash
-uv run https://github.com/PrefectHQ/examples/blob/main/flows/hello_world.py
+uv run https://raw.githubusercontent.com/PrefectHQ/examples/refs/heads/main/flows/hello_world.py
 ```
 
 
