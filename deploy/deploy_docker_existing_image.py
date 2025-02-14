@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 Deploy a flow using an existing Docker image that contains your flow
 

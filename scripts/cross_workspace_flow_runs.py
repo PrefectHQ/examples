@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 This script lists flow run counts by state and date for all workspaces in an account.
 

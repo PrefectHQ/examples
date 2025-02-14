@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 Update a deployment's concurrency limit via the API. This is a workaround
 for instances where Prefect 2.x is installed and models do not directly support
