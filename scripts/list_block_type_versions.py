@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 Get the registered versions of each block type in a workspace.
 

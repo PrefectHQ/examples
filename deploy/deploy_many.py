@@ -1,3 +1,7 @@
+# /// script
+# dependencies = ["prefect"]
+# ///
+
 """
 An example of discovering and deploying multiple flows from a directory.
 
