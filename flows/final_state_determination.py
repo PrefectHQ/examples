@@ -16,7 +16,8 @@ from prefect.futures import PrefectFuture, PrefectFutureList
 
 def wait_for_futures():
     """
-    Wait for all assigned PrefectFuture and PrefectFutureList objects in the calling function's local scope. If you do not assign the return value of a task to a variable, it will not be waited for.
+    Wait for all assigned PrefectFuture and PrefectFutureList objects in the calling function's local scope.
+    If you do not assign the return value of a task to a variable, it will not be waited for.
     """
     import inspect
 
