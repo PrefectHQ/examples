@@ -3,7 +3,7 @@
 # ///
 
 """
-This example demonstrates how to handle task state determination in Prefect flows.
+This example demonstrates flow final state determination based on task states.
 """
 
 import time
@@ -35,14 +35,14 @@ def example_flow(return_completed_states: bool = False) -> list[State[int | None
     # Wait for all futures to complete using the wait utility
     wait([a, b, c])
 
-    if return_completed_states:  # bail out with completed states
+    if return_completed_states:  # bail out with completed states -> Completed flow run
         return [
             future.state
             for future in [a, b, c]
             if future.state.type == StateType.COMPLETED
         ]
 
-    # Return the states to inspect the outcome
+    # Return all states -> Failed flow run since b failed
     return [a.state, b.state, c.state]
 
 
