@@ -8,15 +8,13 @@ import asyncio
 
 import httpx
 from prefect import flow, get_run_logger, tags, task
+from prefect.cache_policies import NO_CACHE
 
 BASE_URL = "https://dev.to/api"
 CONCURRENCY = 10
 
 
-@task(
-    retries=3,
-    retry_delay_seconds=[10, 30, 60],
-)
+@task(retries=3, retry_delay_seconds=[10, 30, 60], cache_policy=NO_CACHE)
 async def fetch_url(
     client: httpx.AsyncClient,
     semaphore: asyncio.BoundedSemaphore,
@@ -31,7 +29,7 @@ async def fetch_url(
         return response.json()
 
 
-@task
+@task(cache_policy=NO_CACHE)
 async def list_articles(
     client: httpx.AsyncClient,
     semaphore: asyncio.BoundedSemaphore,
