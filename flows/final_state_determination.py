@@ -9,74 +9,51 @@ This example demonstrates flow final state determination based on task states.
 import time
 
 from prefect import flow, task
-
-# Imports for type annotations
-from prefect.futures import PrefectFuture, PrefectFutureList
-
-
-def wait_for_futures():
-    """
-    Wait for all assigned PrefectFuture and PrefectFutureList objects in the calling function's local scope.
-    If you do not assign the return value of a task to a variable, it will not be waited for.
-    """
-    import inspect
-
-    caller_locals = inspect.currentframe().f_back.f_locals
-
-    for item in caller_locals.values():
-        if isinstance(item, (PrefectFuture, PrefectFutureList)):
-            item.wait()
+from prefect.futures import wait, PrefectFuture
+from prefect.states import State, StateType
 
 
 @task
-def wait(seconds: int) -> int:
+def waiting_task(seconds: int) -> int:
     time.sleep(seconds)
     return seconds
 
 
 @task
-def fail(seconds: int):
+def failing_task(seconds: int):
     time.sleep(seconds)
-    raise ValueError("Task failed successfully")
+    raise ValueError("Task failed (as expected)")
 
 
 @flow
-def subflow(behavior: str):
+def example_flow(return_completed_states: bool = False) -> list[State[int | None]]:
     # Submit three tasks that depend on each other sequentially (a -> b -> c)
-    a: PrefectFuture = wait.submit(1)
-    b: PrefectFuture = fail.submit(1, wait_for=[a])
-    c: PrefectFuture = wait.submit(1, wait_for=[b])
+    a: PrefectFuture = waiting_task.submit(1)
+    b: PrefectFuture = failing_task.submit(1, wait_for=[a])
+    c: PrefectFuture = waiting_task.submit(1, wait_for=[b])
 
-    # The easiest option is to return the futures themselves
-    # This will automatically wait for them to complete and fail the flow if any task fails
-    if behavior == "futures":
-        return [a, b, c]
+    # Wait for all futures to complete using the wait utility
+    wait([a, b, c])
 
-    # Another option with more control is to wait for, and then return, the task states
-    # In this case, the exception is not re-raised in the flow, but the flow will still fail
-    elif behavior == "states":
-        # First we wait for the tasks to complete
-        # We'll use the wait_for_futures() helper but you could also do this manually:
-        # [_task.wait() for _task in [a, b, c]]
-        wait_for_futures()
-        # Then we return the states
-        return [a.state, b.state, c.state]
+    if return_completed_states:  # bail out with completed states -> Completed flow run
+        return [
+            future.state
+            for future in [a, b, c]
+            if future.state.type == StateType.COMPLETED
+        ]
 
-    # Another option is to re-raise any exceptions from the task in the flow
-    # Calling .result() will wait for the task to complete
-    elif behavior == "raise":
-        [item.result(raise_on_failure=True) for item in [a, b, c]]
-
-    else:
-        raise ValueError(f"Invalid behavior: {behavior}")
-
-
-@flow
-def main():
-    subflow("futures")
-    subflow("states")
-    subflow("raise")
+    # Return all states -> Failed flow run since b failed
+    return [a.state, b.state, c.state]
 
 
 if __name__ == "__main__":
-    main()
+    resulting_states = example_flow()
+    assert [state.type for state in resulting_states] == [
+        StateType.COMPLETED,
+        StateType.FAILED,
+        StateType.PENDING,  # c could not run, as b failed
+    ]
+
+    completed_states = example_flow(return_completed_states=True)
+    assert [state.type for state in completed_states] == [StateType.COMPLETED]
+    assert completed_states[0].result() == 1
