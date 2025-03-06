@@ -6,9 +6,10 @@
 Example of bulk updating flow run states.
 """
 
+from __future__ import annotations
+
 import asyncio
 
-import pendulum
 import typer
 
 # TODO: https://github.com/PrefectHQ/prefect/issues/15957#issuecomment-2565751830
@@ -23,12 +24,13 @@ from prefect.client.schemas.filters import (
     FlowRunFilterState,
     FlowRunFilterStateType,
 )
+from prefect.types import DateTime
 
 LIMIT = 100
 
 
 async def list_flow_runs_with_state(
-    states: list[StateType], before: pendulum.DateTime, after: pendulum.DateTime
+    states: list[StateType], before: DateTime, after: DateTime
 ) -> list[FlowRun]:
     offset = 0
     more_results = True
@@ -98,8 +100,8 @@ async def update_flow_run_state(
 async def _bulk_update_flow_run_state(
     from_states: list[StateType],
     to_state: StateType,
-    before: pendulum.DateTime,
-    after: pendulum.DateTime,
+    before: DateTime,
+    after: DateTime,
     message: str | None = None,
     force: bool = False,
 ):
@@ -180,7 +182,7 @@ def bulk_update_flow_run_state(
     to the target state. It will prompt for confirmation before making any changes.
     """
     # Calculate date range based on days_ago
-    now = pendulum.now()
+    now = DateTime.now()
     after = now.subtract(days=days_ago)
 
     asyncio.run(
