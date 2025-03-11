@@ -1,15 +1,22 @@
 # Prefect 2 worker on ECS Fargate
 
-This recipe demonstrates how to deploy a Prefect 2 worker onto ECS Fargate using [Terraform](https://www.terraform.io/). It is intended to be used as a Terraform module as described in [Usage](#usage) below. It assumes you have Terraform installed, and was tested with Terraform `v1.4.6`.
+This recipe demonstrates how to deploy a Prefect 3 worker onto ECS Fargate using [Terraform](https://www.terraform.io/). It is intended to be used as a Terraform module as described in [Usage](#usage) below. It assumes you have Terraform installed, and was tested with Terraform `v1.11`.
 
 Note that flows will run inside the worker ECS task, as opposed to becoming their own ECS tasks.
 
-## Usage
-
 ![image](https://github.com/PrefectHQ/prefect-recipes/assets/68969861/d148af90-58dd-4ce2-a160-e23fada6c895)
 
+## Requirements
 
-To start with you will need your Prefect account ID, workspace ID, and API key. You will also need to pick one or more subnets that Fargate will launch into, as well as give your deployment a name.
+To start, you will need:
+
+- Your Prefect account ID
+- Your Prefect workspace ID
+- Your Prefect API key
+- A subnet where Fargate will create ECS tasks
+- A name for your deployment
+
+## Usage
 
 In order to avoid accidentally committing your API key, consider structuring your project as follows,
 
@@ -40,7 +47,7 @@ provider "aws" {
 
 // Don't panic! These values are just random uuid.uuid4()s
 module "prefect_ecs_worker" {
-  source = "github.com/PrefectHQ/prefect-recipes//devops/infrastructure-as-code/aws/tf-prefect2-ecs-worker"
+  source = "github.com/PrefectHQ/examples/infra/amazon-ecs-worker"
 
   worker_subnets        = [
     "subnet-014aa5f348034e45b",
