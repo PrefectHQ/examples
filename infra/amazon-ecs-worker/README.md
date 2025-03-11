@@ -64,6 +64,9 @@ module "prefect_ecs_worker" {
 
 Assuming the file structure above, you can run `terraform init` followed by `terraform apply` to create the resources. Check out the [Inputs](#inputs) section below for more options.
 
+Once complete, you will see a new work pool available in Prefect. You can then use this work pool for your deployments.
+See the [deployments documentation](https://docs.prefect.io/v3/deploy/index) for more information.
+
 ## Reference
 
 The [terraform docs](https://terraform-docs.io/) below can be generated with the following command:
