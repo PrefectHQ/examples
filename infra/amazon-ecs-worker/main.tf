@@ -36,42 +36,48 @@ resource "aws_iam_role" "prefect_worker_execution_role" {
     ]
   })
 
-  inline_policy {
-    name = "ssm-allow-read-prefect-api-key-${var.name}"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = [
-            "kms:Decrypt",
-            "secretsmanager:GetSecretValue",
-            "ssm:GetParameters"
-          ]
-          Effect = "Allow"
-          Resource = [
-            aws_secretsmanager_secret.prefect_api_key.arn
-          ]
-        }
-      ]
-    })
-  }
-  inline_policy {
-    name = "logs-allow-create-log-group-${var.name}"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = [
-            "logs:CreateLogGroup",
-          ]
-          Effect   = "Allow"
-          Resource = "*"
-        }
-      ]
-    })
-  }
   // AmazonECSTaskExecutionRolePolicy is an AWS managed role for creating ECS tasks and services
   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"]
+}
+
+resource "aws_iam_role_policy" "ssm_allow_read_prefect_api_key" {
+  name = "ssm-allow-read-prefect-api-key-${var.name}"
+  role = aws_iam_role.prefect_worker_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "kms:Decrypt",
+          "secretsmanager:GetSecretValue",
+          "ssm:GetParameters"
+        ]
+        Effect = "Allow"
+        Resource = [
+          aws_secretsmanager_secret.prefect_api_key.arn
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "logs_allow_create_log_group" {
+  name = "logs-allow-create-log-group-${var.name}"
+  role = aws_iam_role.prefect_worker_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "logs:CreateLogGroup",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role" "prefect_worker_task_role" {
@@ -90,38 +96,41 @@ resource "aws_iam_role" "prefect_worker_task_role" {
       },
     ]
   })
+}
 
-  inline_policy {
-    name = "prefect-worker-allow-ecs-task-${var.name}"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = [
-            "ec2:DescribeSubnets",
-            "ec2:DescribeVpcs",
-            "ecr:BatchCheckLayerAvailability",
-            "ecr:BatchGetImage",
-            "ecr:GetAuthorizationToken",
-            "ecr:GetDownloadUrlForLayer",
-            "ecs:DeregisterTaskDefinition",
-            "ecs:DescribeTaskDefinition",
-            "ecs:DescribeTasks",
-            "ecs:RegisterTaskDefinition",
-            "ecs:RunTask",
-            "ecs:StopTask",
-            "iam:PassRole",
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:GetLogEvents",
-            "logs:PutLogEvents"
-          ]
-          Effect   = "Allow"
-          Resource = "*"
-        }
-      ]
-    })
-  }
+resource "aws_iam_role_policy" "" {
+  name  = "prefect-worker-allow-ecs-task-${var.name}"
+  count = var.worker_task_role_arn == null ? 1 : 0
+  role  = prefect_worker_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ec2:DescribeSubnets",
+          "ec2:DescribeVpcs",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
+          "ecr:GetAuthorizationToken",
+          "ecr:GetDownloadUrlForLayer",
+          "ecs:DeregisterTaskDefinition",
+          "ecs:DescribeTaskDefinition",
+          "ecs:DescribeTasks",
+          "ecs:RegisterTaskDefinition",
+          "ecs:RunTask",
+          "ecs:StopTask",
+          "iam:PassRole",
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:GetLogEvents",
+          "logs:PutLogEvents"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 resource "aws_cloudwatch_log_group" "prefect_worker_log_group" {
