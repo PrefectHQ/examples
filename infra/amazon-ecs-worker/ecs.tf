@@ -48,8 +48,10 @@ resource "aws_ecs_task_definition" "prefect_worker_task_definition" {
       }
     }
   ])
+
   // Execution role allows ECS to create tasks and services
   execution_role_arn = aws_iam_role.prefect_worker_execution_role.arn
+
   // Task role allows tasks and services to access other AWS resources
   // Use worker_task_role_arn if provided, otherwise populate with default
   task_role_arn = var.worker_task_role_arn == null ? aws_iam_role.prefect_worker_task_role[0].arn : var.worker_task_role_arn
@@ -68,5 +70,6 @@ resource "aws_ecs_service" "prefect_worker_service" {
     assign_public_ip = true
     subnets          = var.worker_subnets
   }
+
   task_definition = aws_ecs_task_definition.prefect_worker_task_definition.arn
 }
