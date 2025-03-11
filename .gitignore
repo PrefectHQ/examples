@@ -167,3 +167,11 @@ uv.lock
 
 # vscode
 .vscode/
+
+# Local Terraform provider cache and state
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.*.backup
+terraform.tfstate.backup
+local.tfvars
