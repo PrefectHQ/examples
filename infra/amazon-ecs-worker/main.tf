@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-// Region speficied in AWS provider
+// Region specified in AWS provider
 data "aws_region" "current" {}
 
 resource "aws_secretsmanager_secret" "prefect_api_key" {
