@@ -15,9 +15,7 @@ repos:
   hooks:
     - id: terraform-docs
       name: Terraform Provider Docs
-      # only run if these files are modified:
-      # - infra/
-      files: ^(infra/.*)$
+      files: ^(infra/amazon-ecs-worker/.*)$
       entry: terraform-docs
       args:
         - markdown
