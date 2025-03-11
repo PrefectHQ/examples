@@ -35,9 +35,13 @@ resource "aws_iam_role" "prefect_worker_execution_role" {
       },
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "prefect_worker_ecs_policy" {
+  role = aws_iam_role.prefect_worker_execution_role.name
 
   // AmazonECSTaskExecutionRolePolicy is an AWS managed role for creating ECS tasks and services
-  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 resource "aws_iam_role_policy" "ssm_allow_read_prefect_api_key" {
