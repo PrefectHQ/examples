@@ -63,11 +63,9 @@ resource "aws_ecs_service" "prefect_worker_service" {
   desired_count = var.worker_desired_count
   launch_type   = "FARGATE"
 
-  // Public IP required for pulling secrets and images
-  // https://aws.amazon.com/premiumsupport/knowledge-center/ecs-unable-to-pull-secrets/
   network_configuration {
+    assign_public_ip = false
     security_groups  = [aws_security_group.prefect_worker.id]
-    assign_public_ip = true
     subnets          = var.worker_subnets
   }
 
