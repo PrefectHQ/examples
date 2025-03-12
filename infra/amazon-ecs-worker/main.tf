@@ -105,7 +105,7 @@ resource "aws_iam_role" "prefect_worker_task_role" {
 resource "aws_iam_role_policy" "prefect_worker_allow_ecs_task" {
   name  = "prefect-worker-allow-ecs-task-${var.name}"
   count = var.worker_task_role_arn == null ? 1 : 0
-  role  = prefect_worker_task_role.id
+  role  = aws_iam_role.prefect_worker_task_role[0].id
 
   policy = jsonencode({
     Version = "2012-10-17"
