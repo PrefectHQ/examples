@@ -18,7 +18,7 @@ variable "worker_extra_pip_packages" {
 
 variable "worker_image" {
   description = "Container image for the worker. This could be the name of an image in a public repo or an ECR ARN"
-  default     = "prefecthq/prefect:2-python3.10"
+  default     = "prefecthq/prefect:3-python3.11"
   type        = string
 }
 

@@ -126,7 +126,7 @@ No modules.
 | <a name="input_worker_cpu"></a> [worker\_cpu](#input\_worker\_cpu) | CPU units to allocate to the worker | `number` | `1024` | no |
 | <a name="input_worker_desired_count"></a> [worker\_desired\_count](#input\_worker\_desired\_count) | Number of workers to run | `number` | `1` | no |
 | <a name="input_worker_extra_pip_packages"></a> [worker\_extra\_pip\_packages](#input\_worker\_extra\_pip\_packages) | Packages to install on the worker assuming image is based on prefecthq/prefect | `string` | `"prefect-aws s3fs"` | no |
-| <a name="input_worker_image"></a> [worker\_image](#input\_worker\_image) | Container image for the worker. This could be the name of an image in a public repo or an ECR ARN | `string` | `"prefecthq/prefect:2-python3.10"` | no |
+| <a name="input_worker_image"></a> [worker\_image](#input\_worker\_image) | Container image for the worker. This could be the name of an image in a public repo or an ECR ARN | `string` | `"prefecthq/prefect:3-python3.11"` | no |
 | <a name="input_worker_log_retention_in_days"></a> [worker\_log\_retention\_in\_days](#input\_worker\_log\_retention\_in\_days) | Number of days to retain worker logs for | `number` | `30` | no |
 | <a name="input_worker_memory"></a> [worker\_memory](#input\_worker\_memory) | Memory units to allocate to the worker | `number` | `2048` | no |
 | <a name="input_worker_subnets"></a> [worker\_subnets](#input\_worker\_subnets) | Subnets to place the worker in | `list(string)` | n/a | yes |
