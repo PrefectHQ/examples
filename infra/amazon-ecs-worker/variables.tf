@@ -23,7 +23,7 @@ variable "worker_image" {
 }
 
 variable "worker_log_retention_in_days" {
-  description = "Number of days to retain worker logs for"
+  description = "Number of days to retain worker logs"
   default     = 30
   type        = number
 }
@@ -35,12 +35,12 @@ variable "worker_memory" {
 }
 
 variable "worker_work_pool_name" {
-  description = "Work pool that the worker should listen to"
+  description = "Work pool that the worker should poll"
   type        = string
 }
 
 variable "worker_subnets" {
-  description = "Subnets to place the worker in"
+  description = "Subnet(s) to use for the worker"
   type        = list(string)
 }
 
@@ -56,17 +56,17 @@ variable "name" {
 }
 
 variable "prefect_account_id" {
-  description = "Prefect cloud account ID"
+  description = "Prefect Cloud account ID"
   type        = string
 }
 
 variable "prefect_workspace_id" {
-  description = "Prefect cloud workspace ID"
+  description = "Prefect Cloud workspace ID"
   type        = string
 }
 
 variable "prefect_api_key" {
-  description = "Prefect cloud API key"
+  description = "Prefect Cloud API key"
   type        = string
   sensitive   = true
 }
@@ -85,5 +85,5 @@ variable "secrets_manager_recovery_in_days" {
 variable "worker_type" {
   type        = string
   default     = "ecs"
-  description = "Prefect Worker type that gets passed into the prefect worker start command"
+  description = "Prefect worker type that gets passed into the Prefect worker start command"
 }

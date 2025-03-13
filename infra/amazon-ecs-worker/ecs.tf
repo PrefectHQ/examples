@@ -49,25 +49,24 @@ resource "aws_ecs_task_definition" "prefect_worker_task_definition" {
     }
   ])
 
-  // Execution role allows ECS to create tasks and services
+  // Execution role allows ECS to create tasks and services.
   execution_role_arn = aws_iam_role.prefect_worker_execution_role.arn
 
-  // Task role allows tasks and services to access other AWS resources
-  // Use worker_task_role_arn if provided, otherwise populate with default
+  // Task role allows tasks and services to access other AWS resources.
+  // Use worker_task_role_arn if provided, otherwise populate with default.
   task_role_arn = var.worker_task_role_arn == null ? aws_iam_role.prefect_worker_task_role[0].arn : var.worker_task_role_arn
 }
 
 resource "aws_ecs_service" "prefect_worker_service" {
-  name          = "prefect-worker-${var.name}"
-  cluster       = aws_ecs_cluster.prefect_worker_cluster.id
-  desired_count = var.worker_desired_count
-  launch_type   = "FARGATE"
+  name            = "prefect-worker-${var.name}"
+  cluster         = aws_ecs_cluster.prefect_worker_cluster.id
+  desired_count   = var.worker_desired_count
+  launch_type     = "FARGATE"
+  task_definition = aws_ecs_task_definition.prefect_worker_task_definition.arn
 
   network_configuration {
     assign_public_ip = false
     security_groups  = [aws_security_group.prefect_worker.id]
     subnets          = var.worker_subnets
   }
-
-  task_definition = aws_ecs_task_definition.prefect_worker_task_definition.arn
 }

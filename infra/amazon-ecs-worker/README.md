@@ -118,21 +118,21 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_name"></a> [name](#input\_name) | Unique name for this worker deployment | `string` | n/a | yes |
-| <a name="input_prefect_account_id"></a> [prefect\_account\_id](#input\_prefect\_account\_id) | Prefect cloud account ID | `string` | n/a | yes |
-| <a name="input_prefect_api_key"></a> [prefect\_api\_key](#input\_prefect\_api\_key) | Prefect cloud API key | `string` | n/a | yes |
-| <a name="input_prefect_workspace_id"></a> [prefect\_workspace\_id](#input\_prefect\_workspace\_id) | Prefect cloud workspace ID | `string` | n/a | yes |
+| <a name="input_prefect_account_id"></a> [prefect\_account\_id](#input\_prefect\_account\_id) | Prefect Cloud account ID | `string` | n/a | yes |
+| <a name="input_prefect_api_key"></a> [prefect\_api\_key](#input\_prefect\_api\_key) | Prefect Cloud API key | `string` | n/a | yes |
+| <a name="input_prefect_workspace_id"></a> [prefect\_workspace\_id](#input\_prefect\_workspace\_id) | Prefect Cloud workspace ID | `string` | n/a | yes |
 | <a name="input_secrets_manager_recovery_in_days"></a> [secrets\_manager\_recovery\_in\_days](#input\_secrets\_manager\_recovery\_in\_days) | Deletion delay for AWS Secrets Manager upon resource destruction | `number` | `30` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID in which to create all resources | `string` | n/a | yes |
 | <a name="input_worker_cpu"></a> [worker\_cpu](#input\_worker\_cpu) | CPU units to allocate to the worker | `number` | `1024` | no |
 | <a name="input_worker_desired_count"></a> [worker\_desired\_count](#input\_worker\_desired\_count) | Number of workers to run | `number` | `1` | no |
 | <a name="input_worker_extra_pip_packages"></a> [worker\_extra\_pip\_packages](#input\_worker\_extra\_pip\_packages) | Packages to install on the worker assuming image is based on prefecthq/prefect | `string` | `"prefect-aws s3fs"` | no |
 | <a name="input_worker_image"></a> [worker\_image](#input\_worker\_image) | Container image for the worker. This could be the name of an image in a public repo or an ECR ARN | `string` | `"prefecthq/prefect:3-python3.11"` | no |
-| <a name="input_worker_log_retention_in_days"></a> [worker\_log\_retention\_in\_days](#input\_worker\_log\_retention\_in\_days) | Number of days to retain worker logs for | `number` | `30` | no |
+| <a name="input_worker_log_retention_in_days"></a> [worker\_log\_retention\_in\_days](#input\_worker\_log\_retention\_in\_days) | Number of days to retain worker logs | `number` | `30` | no |
 | <a name="input_worker_memory"></a> [worker\_memory](#input\_worker\_memory) | Memory units to allocate to the worker | `number` | `2048` | no |
-| <a name="input_worker_subnets"></a> [worker\_subnets](#input\_worker\_subnets) | Subnets to place the worker in | `list(string)` | n/a | yes |
+| <a name="input_worker_subnets"></a> [worker\_subnets](#input\_worker\_subnets) | Subnet(s) to use for the worker | `list(string)` | n/a | yes |
 | <a name="input_worker_task_role_arn"></a> [worker\_task\_role\_arn](#input\_worker\_task\_role\_arn) | Optional task role ARN to pass to the worker. If not defined, a task role will be created | `string` | `null` | no |
-| <a name="input_worker_type"></a> [worker\_type](#input\_worker\_type) | Prefect Worker type that gets passed into the prefect worker start command | `string` | `"ecs"` | no |
-| <a name="input_worker_work_pool_name"></a> [worker\_work\_pool\_name](#input\_worker\_work\_pool\_name) | Work pool that the worker should listen to | `string` | n/a | yes |
+| <a name="input_worker_type"></a> [worker\_type](#input\_worker\_type) | Prefect worker type that gets passed into the Prefect worker start command | `string` | `"ecs"` | no |
+| <a name="input_worker_work_pool_name"></a> [worker\_work\_pool\_name](#input\_worker\_work\_pool\_name) | Work pool that the worker should poll | `string` | n/a | yes |
 
 ## Outputs
 
