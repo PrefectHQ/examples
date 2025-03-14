@@ -2,6 +2,8 @@
 
 This repository contains examples that demonstrate how to use Prefect. The example are intended to be starting points rather than complete solutions. We hope you find them useful!
 
+## Running these examples
+
 > [!IMPORTANT]
 > This repository uses [uv](https://docs.astral.sh/uv/) for Python environment management.
 
@@ -17,6 +19,21 @@ If you haven't, you can point `uv run` at the URL of the Python file, for exampl
 uv run https://raw.githubusercontent.com/PrefectHQ/examples/refs/heads/main/flows/hello_world.py
 ```
 
-## Development
+> [!IMPORTANT]
+> If you're not using Prefect Cloud, using deployment/scheduling functionality requires a Prefect server.
 
-To set up pre-commit checks, run `uvx pre-commit`.
+You can run a server locally:
+
+```bash
+uvx prefect server start
+```
+
+or instead in a docker container:
+
+```bash
+docker run -p 4200:4200 -d --rm prefecthq/prefect:3-latest -- prefect server start --host 0.0.0.0
+```
+
+
+
+
