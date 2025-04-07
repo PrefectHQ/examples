@@ -167,3 +167,7 @@ uv.lock
 
 # vscode
 .vscode/
+
+
+# raw prefect metadata
+apps/background-tasks/task-storage/

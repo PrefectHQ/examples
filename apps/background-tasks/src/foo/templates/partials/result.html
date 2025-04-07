@@ -1,0 +1,11 @@
+<div id="result">
+    <div id="task-status-{{ task_run_id }}" hx-get="/task/{{ task_run_id }}/status" hx-trigger="every 1s"
+        hx-swap="outerHTML">
+        <p>Task run {{ task_run_id }} submitted successfully!</p>
+        <p>Processing... Please wait.</p>
+        <div class="log-container"
+            style="margin: 10px 0; padding: 8px; background-color: #f0f0f0; font-family: monospace; max-height: 150px; overflow-y: auto; border: 1px solid #ccc;">
+            <div>Waiting for task result...</div>
+        </div>
+    </div>
+</div>

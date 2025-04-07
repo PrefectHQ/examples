@@ -1,0 +1,89 @@
+/* src/foo/static/style.css */
+
+#result {
+    margin-top: 1rem;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Styles moved from inline and improved */
+.log-container {
+    margin: 10px 0;
+    padding: 0.5rem 0.75rem;
+    /* Use relative units */
+    background-color: var(--pico-card-background-color);
+    /* Use Pico variable */
+    font-family: var(--pico-font-monospace);
+    /* Use Pico variable */
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid var(--pico-card-border-color);
+    /* Use Pico variable */
+    border-radius: var(--pico-border-radius);
+    /* Use Pico variable */
+    font-size: 0.875em;
+    /* Slightly smaller for logs */
+}
+
+.result-data,
+.error-message pre {
+    /* Style for result and error pre blocks */
+    background-color: var(--pico-card-background-color);
+    /* Match container or use #f5f5f5 */
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--pico-border-radius);
+    overflow-x: auto;
+    font-family: var(--pico-font-monospace);
+}
+
+/* Distinct styling for error state */
+.task-result.error .log-container,
+.task-result.error article {
+    /* Use Pico's invalid state colors */
+    --pico-card-border-color: var(--pico-color-red-500);
+    border-left: 4px solid var(--pico-color-red-500);
+    /* Add a visual cue */
+}
+
+.task-result.error header {
+    background-color: var(--pico-color-red-500);
+    /* Use theme color */
+    color: var(--pico-color-red-inverse);
+}
+
+/* Optional: Distinct styling for success state */
+.task-result.success article {
+    --pico-card-border-color: var(--pico-color-green-500);
+    border-left: 4px solid var(--pico-color-green-500);
+}
+
+.task-result.success header {
+    background-color: var(--pico-color-green-500);
+    color: var(--pico-color-green-inverse);
+}
+
+/* Style Pico articles slightly */
+article.task-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    /* Add some internal padding */
+}
+
+article.task-result header {
+    padding: 0.5rem 1rem;
+    /* Adjust header padding */
+    margin: -1rem -1rem 1rem -1rem;
+    /* Make header span full width */
+    border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0;
+    /* Match top corners */
+}
+
+
+/* Ensure code within pre also wraps if needed */
+pre code {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

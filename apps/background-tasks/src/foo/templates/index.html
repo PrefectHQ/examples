@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Cast Data{% endblock %}
+
+{% block content %}
+<h1>Cast Data</h1>
+<form hx-post="/" hx-target="#result" hx-swap="outerHTML" hx-disabled-elt="button, textarea, input">
+    <label for="payload">
+        Payload (JSON string):
+        <textarea id="payload" name="payload" rows="5"
+            required>{ "user request": "what's the answer to it all?" }</textarea>
+    </label>
+
+    <label for="instructions">
+        Instructions:
+        <input type="text" id="instructions" name="instructions" value="style of douglas adams" required>
+    </label>
+
+    <label for="target_type">
+        Fully qualified type name (e.g., `builtins.str`):
+        <input type="text" id="target_type" name="target_type" value="builtins.float" required>
+    </label>
+
+    <button type="submit">Submit</button>
+</form>
+
+<div id="result">
+    <!-- Initial result area, HTMX replaces this -->
+</div>
+{% endblock %}

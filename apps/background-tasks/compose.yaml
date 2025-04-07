@@ -1,0 +1,71 @@
+services:
+
+  prefect-server:
+    build:
+      context: .
+      target: server
+    ports:
+      - "4200:4200"
+    volumes:
+      - prefect-data:/root/.prefect
+    environment:
+      PREFECT_SERVER_API_HOST: 0.0.0.0
+
+  task:
+    build:
+      context: .
+      target: task
+    volumes:
+      - ./task-storage:/task-storage
+    depends_on:
+      prefect-server:
+        condition: service_started
+    environment:
+      MARVIN_ENABLE_DEFAULT_PRINT_HANDLER: false
+      PREFECT_API_URL: http://prefect-server:4200/api
+      PREFECT_LOCAL_STORAGE_PATH: /task-storage
+      PREFECT_LOGGING_LOG_PRINTS: true
+      PREFECT_RESULTS_PERSIST_BY_DEFAULT: true
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - .venv/
+            - task-storage/
+        - action: rebuild
+          path: uv.lock
+
+  api:
+    build:
+      context: .
+      target: api
+    volumes:
+      - ./task-storage:/task-storage
+    ports:
+      - "8000:8000"
+    depends_on:
+      task:
+        condition: service_started
+      prefect-server:
+        condition: service_started
+    environment:
+      PREFECT_API_URL: http://prefect-server:4200/api
+      PREFECT_LOCAL_STORAGE_PATH: /task-storage
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - .venv/
+            - task-storage/
+        - action: rebuild
+          path: uv.lock
+
+volumes:
+  postgres_data: {}
+  prefect-data: {}
+  task-storage: {}
