@@ -27,8 +27,7 @@ services:
       PREFECT_LOGGING_LOG_PRINTS: true
       PREFECT_RESULTS_PERSIST_BY_DEFAULT: true
       OPENAI_API_KEY: ${OPENAI_API_KEY}
-    env_file:
-      - .env
+
     develop:
       watch:
         - action: sync
