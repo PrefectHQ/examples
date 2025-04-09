@@ -1,43 +1,33 @@
-import inspect
-from typing import Any, Callable
+from typing import Any, TypeVar
 
 import marvin
 
-from prefect import task
+from prefect import task, Task
 from prefect.cache_policies import INPUTS, TASK_SOURCE
+from prefect.states import State
 from prefect.task_worker import serve
+from prefect.client.schemas.objects import TaskRun
+
+T = TypeVar("T")
 
 
-def _print_output(output: Any):
-    print(f"result type: {type(output)}")
-    print(f"result: {output!r}")
+def _print_output(task: Task, task_run: TaskRun, state: State[T]):
+    result = state.result()
+    print(f"result type: {type(result)}")
+    print(f"result: {result!r}")
 
 
-@task(cache_policy=INPUTS + TASK_SOURCE)
-async def cast_data_to_type[T](
-    data: Any,
-    target: type[T],
-    instructions: str,
-    on_complete: Callable[[T], None] | None = _print_output,
-) -> T:
-    output = await marvin.cast_async(
+@task(cache_policy=INPUTS + TASK_SOURCE, on_completion=[_print_output])
+async def create_structured_output(data: Any, target: type[T], instructions: str) -> T:
+    return await marvin.cast_async(
         data,
         target=target,
         instructions=instructions,
     )
 
-    if on_complete:
-        if inspect.iscoroutinefunction(on_complete):
-            await on_complete(output)
-        else:
-            on_complete(output)
-
-    return output
-
 
 def main():
-    """main entrypoint for the task"""
-    serve(cast_data_to_type)
+    serve(create_structured_output)
 
 
 if __name__ == "__main__":
