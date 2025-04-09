@@ -1,0 +1,15 @@
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
+[project]
+name = "foo"
+version = "0.0.1"
+description = "a prefect-powered background task manager"
+readme = "README.md"
+requires-python = "==3.13.*"
+dependencies = ["prefect", "marvin", "python-multipart"]
+
+
+[tool.uv.sources]
+marvin = { git = "https://github.com/PrefectHQ/marvin.git" }

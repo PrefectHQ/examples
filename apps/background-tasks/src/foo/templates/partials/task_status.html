@@ -1,0 +1,30 @@
+{% if status == "completed" %}
+<article id="task-status-{{ task_run_id }}" class="task-result success">
+    <header>Task Completed!</header>
+    <p>Task run <code>{{ task_run_id }}</code> finished successfully.</p>
+    <div id="task-result">
+        <strong>Result:</strong>
+        <pre class="result-data"><code>{{ result | tojson(indent=2) }}</code></pre>
+    </div>
+</article>
+{% elif status == "error" %}
+<article id="task-status-{{ task_run_id }}" class="task-result error" aria-invalid="true">
+    <header>Task Failed</header>
+    <p>Task run <code>{{ task_run_id }}</code> failed.</p>
+    <strong>Error Details:</strong>
+    <div class="log-container error-message">
+        <pre><code>{{ message }}</code></pre>
+    </div>
+</article>
+{% else %}
+<div id="task-status-{{ task_run_id }}" class="task-result pending">
+    <p>Task run <code>{{ task_run_id }}</code> submitted.</p>
+    <p>Processing...</p>
+    <div class="log-container">
+        <div>Waiting for task result...</div>
+    </div>
+    <div hx-get="/task/{{ task_run_id }}/status" hx-trigger="load delay:1s" hx-swap="outerHTML"
+        hx-target="#task-status-{{ task_run_id }}" style="display: none;">
+    </div>
+</div>
+{% endif %}
