@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from foo._internal import get_form_data, get_task_result, StructuredOutputRequest
-from foo.task import cast_data_to_type
+from foo.task import create_structured_output
 from prefect.logging import get_logger
 
 app = FastAPI()
@@ -31,7 +31,7 @@ async def produce_structured_output_from_form(
     request: Request,
     form_data: StructuredOutputRequest = Depends(get_form_data),
 ) -> HTMLResponse:
-    future = cast_data_to_type.delay(  # type: ignore
+    future = create_structured_output.delay(  # type: ignore
         form_data.payload,
         target=form_data.target_type,
         instructions=form_data.instructions,
