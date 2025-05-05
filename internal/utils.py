@@ -45,7 +45,7 @@ _RE_CODEBLOCK = re.compile(r"\s*```[^`]+```\s*", re.MULTILINE)
 def render_example_md(example: Example) -> str:
     """Render a Python code example to Markdown documentation format."""
 
-    with open(example.filename) as f:
+    with open(example.filename, encoding="utf-8") as f:
         content = f.read()
 
     lines = _RE_NEWLINE.split(content)
@@ -81,6 +81,26 @@ def render_example_md(example: Example) -> str:
 This is the source code for **{example.module}**.
 {text}"""
 
+    # ---------------------------------------------------------------------
+    # Prepend a "View on GitHub" button linking to the source file ---------
+    # ---------------------------------------------------------------------
+
+    github_base_url = "https://github.com/griggz/prefect-examples-test/blob/main/"
+    github_url = f"{github_base_url}{example.repo_filename}"
+
+    # Using raw HTML for precise placement; most Markdown/MDX renderers will
+    # preserve the styling while allowing fallback to a plain link if HTML
+    # is stripped.
+    github_button = (
+        f'<a href="{github_url}" target="_blank" '
+        f'style="float: right; padding: 6px 12px; background-color: #24292e; '
+        f'color: #ffffff; border-radius: 4px; text-decoration: none; '
+        f'font-size: 0.875rem; font-weight: 500;">View on GitHub</a>\n\n'
+    )
+
+    # Insert the button at the very top of the document.
+    text = github_button + text
+
     return text
 
 
@@ -113,7 +133,7 @@ def gather_example_files(
                     module = f"{parent_mods}.{subdir.stem}.{filename.stem}"
                 else:
                     module = f"{subdir.stem}.{filename.stem}"
-                data = jupytext.read(open(filename_abs), config=config)
+                data = jupytext.read(open(filename_abs, encoding="utf-8"), config=config)
                 metadata = data["metadata"]["jupytext"].get("root_level_metadata", {})
                 cmd = metadata.get("cmd", ["modal", "run", repo_filename])
                 args = metadata.get("args", [])

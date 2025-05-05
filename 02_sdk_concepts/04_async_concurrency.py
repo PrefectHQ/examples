@@ -24,6 +24,15 @@
 # * **Integration**: Works with async libraries like `httpx`, `asyncpg`, etc.
 # * **Scalability**: Handle thousands of concurrent operations efficiently
 # 
+# For more details on async and concurrency in Prefect, see the official documentation:
+# <https://docs.prefect.io/v3/develop/write-tasks#asynchronous-functions>
+# 
+# ### When should you use async concurrency?
+# * **I/O-bound operations** – Fetch many API endpoints or perform network requests in parallel
+# * **High-latency tasks** – Await slow cloud services or external databases while keeping workers free
+# * **Rate-limited APIs** – Control concurrent requests with semaphores to stay within provider limits
+# * **Large fan-out workloads** – Crawl or scrape thousands of URLs concurrently without spawning threads
+# 
 # ### The task at hand
 # 
 # We'll build a flow that extracts articles from the Dev.to API concurrently:
@@ -164,7 +173,7 @@ if __name__ == "__main__":
 # 4. It then fetched detailed data for ~100 articles concurrently (10 at a time)
 # 5. All this happened while using just a single thread, thanks to async I/O
 #
-# ### Why does this matter?
+# ### Why This Is Important
 #
 # Concurrency is crucial for data pipelines that interact with external systems.
 # With Prefect's support for async:

@@ -6,7 +6,7 @@
 # tags: [getting_started, basics]
 # ---
 
-# ## Welcome to Prefect! ��
+# # Welcome to Prefect!
 # 
 # Prefect helps you build, run, and monitor reliable data workflows. Let's start with 
 # the simplest possible example – a "Hello, world!" flow that greets someone by name.

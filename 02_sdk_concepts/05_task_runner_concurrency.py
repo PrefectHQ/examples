@@ -12,7 +12,7 @@
 
 # ## Thread-based Concurrency with Task Runners
 # 
-# [Prefect task runners](https://docs.prefect.io/v3/guides/task-runners/) provide a powerful way to
+# Prefect task runners provide a powerful way to
 # execute tasks concurrently without writing async code. This example explores
 # **task runners with mapping**.
 # 
@@ -24,7 +24,7 @@
 # 
 # ### Benefits of TaskRunner-based concurrency
 # 
-# Task runners offer [many advantages](https://docs.prefect.io/v3/guides/task-runners/#when-to-use-task-runners)
+# Task runners offer many advantages
 # over other concurrency approaches:
 #
 # * **Simplicity**: No need for `async/await` syntax
@@ -32,9 +32,18 @@
 # * **Scalability**: Can scale up to multiple cores or even multiple machines
 # * **Familiar model**: Uses a thread pool approach common in many programming environments
 # 
+# For an in-depth guide, see Prefect's task-runner documentation:
+# <https://docs.prefect.io/v3/develop/task-runners#run-tasks-concurrently-or-in-parallel>
+# 
+# ### When should you use task runners?
+# * **CPU-bound or mixed workloads** – Parallelize CPU tasks or synchronous I/O with minimal changes
+# * **Non-async libraries** – Gain concurrency when your dependencies don't support async/await
+# * **Incremental scaling** – Local threads today, switch to Dask or Ray tomorrow with one parameter change
+# * **Task mapping fan-out** – Run thousands of small tasks concurrently while tracking each in the UI
+# 
 # ### Task Mapping: The Secret Weapon
 # 
-# A key feature of this approach is [**task mapping**](https://docs.prefect.io/v3/develop/task-map/).
+# A key feature of this approach is [**task mapping**](https://docs.prefect.io/v3/develop/task-runners#mapping-over-iterables).
 # With `.map()`, you can:
 #
 # 1. Apply a task to each item in a collection concurrently
@@ -61,7 +70,7 @@ CONCURRENCY = 10
 # ## Task Definitions
 #
 # Unlike the async approach, these tasks are regular synchronous functions.
-# The concurrency is managed by the [task runner](https://docs.prefect.io/v3/guides/task-runners/),
+# The concurrency is managed by the task runner,
 # not within the tasks themselves.
 # Note the absence of any async/await keywords!
 
@@ -128,7 +137,7 @@ def extract(pages: int) -> None:
 
     # Log the title of each article as they become ready
     # alternatively, _articles.wait() will wait for all articles
-    # We use [as_completed](https://docs.prefect.io/v3/preview/recipes/task-futures/) to process results as they arrive
+    # We use as_completed to process results as they arrive
     for _article in as_completed(_articles):
         get_run_logger().info(_article.result()["title"])
 
@@ -147,7 +156,7 @@ def extract(pages: int) -> None:
 # | More CPU overhead    | Less CPU overhead |
 # | Better for mixed I/O and CPU work | Best for pure I/O work |
 #
-# Read more about [concurrency options in Prefect](https://docs.prefect.io/v3/tutorials/task-concurrency-parallelism/).
+# Read more about concurrency options in Prefect.
 #
 # Using the right approach depends on your specific requirements.
 
@@ -166,7 +175,7 @@ if __name__ == "__main__":
 # 5. As each article was fetched, the title was logged
 # 6. All this happened using standard Python threads, without async code
 #
-# ### Why does this matter?
+# ### Why This Is Important
 #
 # Thread-based concurrency in Prefect offers several key advantages:
 #
@@ -176,7 +185,3 @@ if __name__ == "__main__":
 # * **Monitoring**: Each mapped task gets its own entry in the Prefect UI
 # * **Minimal code changes**: Turn sequential code into parallel code with minimal edits
 #
-# Learn more about these concepts in the [Prefect tutorial on resilient pipelines](https://docs.prefect.io/v3/tutorials/pipelines).
-# 
-# For many data workflows, the ThreadPoolTaskRunner approach is the simplest
-# way to add concurrency while maintaining readability and maintainability.

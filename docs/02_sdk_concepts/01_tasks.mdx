@@ -1,3 +1,5 @@
+<a href="https://github.com/griggz/prefect-examples-test/blob/main/02_sdk_concepts/01_tasks.py" target="_blank" style="float: right; padding: 6px 12px; background-color: #24292e; color: #ffffff; border-radius: 4px; text-decoration: none; font-size: 0.875rem; font-weight: 500;">View on GitHub</a>
+
 
 ## Tasks: The Core Concept of Prefect Workflows
 
@@ -23,6 +25,15 @@ By decorating a function with `@task`, you gain:
 * **Caching** – Skip duplicate work when inputs haven't changed
 * **Retries** – Automatically recover from transient failures
 * **Observability** – Monitor, inspect, and debug task execution in the UI
+
+For a deeper dive into Prefect tasks, see the official documentation:
+<https://docs.prefect.io/latest/concepts/tasks/>
+
+### When should you use tasks?
+* **Network / API calls** – Add retries, timeouts, and logging around external requests
+* **Data transformations** – Encapsulate heavyweight Pandas / Spark operations for caching
+* **Resource-intensive steps** – Delegate CPU / memory-heavy work to distributed workers
+* **Reusable logic** – Package common business logic so it can be shared across flows
 
 ### Tasks are composable
 
@@ -152,7 +163,7 @@ When you run this script, Prefect:
 If any API calls had failed, Prefect would have automatically retried the
 `get_contributors` task according to its retry policy (twice with 5-second delays).
 
-### Why tasks matter
+### Why This Is Important
 
 Tasks are the foundation of scalable, maintainable data workflows:
 

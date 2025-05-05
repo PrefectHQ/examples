@@ -31,6 +31,15 @@
 # * **Retries** – Automatically recover from transient failures
 # * **Observability** – Monitor, inspect, and debug task execution in the UI
 # 
+# For a deeper dive into Prefect tasks, see the official documentation:
+# <https://docs.prefect.io/latest/concepts/tasks/>
+# 
+# ### When should you use tasks?
+# * **Network / API calls** – Add retries, timeouts, and logging around external requests
+# * **Data transformations** – Encapsulate heavyweight Pandas / Spark operations for caching
+# * **Resource-intensive steps** – Delegate CPU / memory-heavy work to distributed workers
+# * **Reusable logic** – Package common business logic so it can be shared across flows
+# 
 # ### Tasks are composable
 # 
 # Tasks work together through simple input/output connections. A task returns a regular 
@@ -151,7 +160,7 @@ def repo_info(repo_owner: str = "PrefectHQ", repo_name: str = "prefect") -> None
 # If any API calls had failed, Prefect would have automatically retried the
 # `get_contributors` task according to its retry policy (twice with 5-second delays).
 # 
-# ### Why tasks matter
+# ### Why This Is Important
 # 
 # Tasks are the foundation of scalable, maintainable data workflows:
 # 

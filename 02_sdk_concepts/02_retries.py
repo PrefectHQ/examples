@@ -18,6 +18,9 @@
 #   decide programmatically whether a retry should occur (perfect for
 #   selective HTTP status handling).
 #
+# For a deeper dive into Prefect retries, see the official documentation:
+# <https://docs.prefect.io/v3/develop/write-tasks#retries>
+#
 # ### When should you use retries?
 # * **Network calls** – External APIs occasionally return 5xx errors or time out
 # * **Cloud resources** – Services might throttle or rate-limit your requests
@@ -158,6 +161,10 @@ def repo_info(repo_owner: str = "PrefectHQ", repo_name: str = "prefect"):
 # * **Provides observability** – Tracks all attempts and surfaces them in the UI
 # * **Enables fine-grained control** – Set different policies for different tasks
 # * **Adapts intelligently** – Use condition functions to retry only when appropriate
+# 
+# ### Why This Is Important
+# 
+# Retries turn transient failures into minor blips and give your workflows production-grade resilience without cluttering your business logic with try/except loops. They ensure data pipelines remain reliable even when external systems are flaky.
 # 
 # By moving retry logic from your business code to Prefect's declarative layer,
 # you get a more maintainable, observable, and resilient workflow with less code.

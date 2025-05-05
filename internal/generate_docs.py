@@ -74,14 +74,14 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
         doc_filename = category_dir / f"{base_filename}{extension}"
         
         # Write the file
-        with open(doc_filename, "w") as f:
+        with open(doc_filename, "w", encoding="utf-8") as f:
             f.write(markdown_content)
         
         print(f"Generated: {doc_filename}")
     
     # Create an index file
     index_path = docs_dir / f"index{extension}"
-    with open(index_path, "w") as f:
+    with open(index_path, "w", encoding="utf-8") as f:
         f.write("# Prefect Examples\n\n")
         f.write("This documentation is auto-generated from the Prefect Examples repository.\n\n")
         

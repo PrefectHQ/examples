@@ -19,7 +19,7 @@ from .utils import EXAMPLES_ROOT, Example, get_examples
 def get_changed_files_from_env() -> List[str]:
     """Get changed files from GitHub Actions environment variables."""
     if "GITHUB_EVENT_PATH" in os.environ:
-        with open(os.environ["GITHUB_EVENT_PATH"]) as f:
+        with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as f:
             event = json.load(f)
         
         # Extract changed files from the pull request

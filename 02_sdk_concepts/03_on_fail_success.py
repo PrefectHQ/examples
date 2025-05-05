@@ -39,13 +39,14 @@
 # your entire Python environment—perfect for sending webhooks, logging to external
 # systems, or triggering downstream processes.
 # 
-# ### Real-world applications
+# For more details, see Prefect's callback documentation:
+# <https://docs.prefect.io/v3/develop/manage-states>
 # 
-# * **Data quality monitoring**: Send success metrics to your observability platform
-# * **DevOps integration**: Create JIRA tickets automatically when pipelines fail
-# * **Team communication**: Push alerts to Slack/Teams when critical flows need attention
-# * **Resource management**: Clean up cloud resources regardless of flow outcome
-# * **Workflow orchestration**: Chain dependent flows together on success
+# ### When should you use callbacks?
+# * **Monitoring & Alerting** – Get Slack/Teams alerts when critical pipelines fail
+# * **Cleanup tasks** – Ensure resources (temp files, clusters) are cleaned regardless of outcome
+# * **Workflow chaining** – Trigger downstream flows only when upstream succeeds
+# * **Metadata reporting** – Push run metrics to observability tools on success
 # 
 # In this example, we'll implement two callbacks that attach to a GitHub repository 
 # stats flow. One handles successful completion by displaying runtime metrics, while
@@ -116,16 +117,7 @@ def repo_info(repo_owner: str = "PrefectHQ", repo_name: str = "prefect"):
     contributors = get_contributors(repo_info)
     print(f"Number of contributors 👷: {len(contributors)}")
 
-# ---
-# ### What just happened?
-# The flow finished and Prefect executed the appropriate callback based on the
-# final state:
-# • If everything succeeded, `log_success` printed a green check‑mark with the
-#   total runtime.
-# • If any task failed and retries were exhausted, `log_failure` printed a red
-#   alert along with the flow‑run ID—perfect for copy‑pasting into the UI.
-#
-# ### Why does this matter?
+# ### Why This Is Important
 # Callbacks give you a single, declarative place to hook monitoring, alerting,
 # or cleanup logic—separating *business* code from *operational* concerns.  No
 # more scattering `try/except` blocks or forgotten Slack calls throughout your

@@ -178,7 +178,7 @@ if __name__ == "__main__":
 #
 # These benefits align with traditional database transaction principles, applied to workflow orchestration.
 #
-# ### Why does this matter?
+# ### Why This Is Important
 #
 # Transactions are critical for maintaining data integrity in production systems:
 #
