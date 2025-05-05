@@ -1,76 +1,69 @@
-# 01_tasks.py
+
+## Tasks: The Core Concept of Prefect Workflows
+
+At its heart, Prefect's design revolves around **tasks**—the fundamental building 
+blocks that define discrete units of work in your data pipelines. Think of tasks 
+as specialized Python functions that gain superpowers through the `@task` decorator.
+
+### What makes a task special?
 
 ```python
-# ---
-# title: Tasks with retries (GitHub API)
-# description: Learn about Prefect's **Task** abstraction – the core building block for modular, reusable workflow components.
-# dependencies: ["prefect", "httpx"]
-# cmd: ["python", "02_sdk_concepts/01_tasks.py"]
-# tags: [tasks, retries, http]
-# ---
+@task
+def process_data(input_data):
+    # Your work here
+    return result
+```
 
-# ## Tasks: The Core Concept of Prefect Workflows
-# 
-# At its heart, Prefect's design revolves around **tasks**—the fundamental building 
-# blocks that define discrete units of work in your data pipelines. Think of tasks 
-# as specialized Python functions that gain superpowers through the `@task` decorator.
-# 
-# ### What makes a task special?
-# 
-# ```python
-# @task
-# def process_data(input_data):
-#     # Your work here
-#     return result
-# ```
-# 
-# By decorating a function with `@task`, you gain:
-# 
-# * **Input/output tracking** – Prefect automatically logs parameters and return values
-# * **State management** – Each task executes with a lifecycle (pending → running → completed)
-# * **Concurrency control** – Run multiple tasks in parallel with configurable limits
-# * **Result persistence** – Store outputs and reuse them across flow runs
-# * **Caching** – Skip duplicate work when inputs haven't changed
-# * **Retries** – Automatically recover from transient failures
-# * **Observability** – Monitor, inspect, and debug task execution in the UI
-# 
-# ### Tasks are composable
-# 
-# Tasks work together through simple input/output connections. A task returns a regular 
-# Python object, which can be passed to other tasks or used directly within a flow.
-# This creates a clean dependency graph that Prefect uses for execution.
-# 
-# ### In this example
-# 
-# We'll build a simple workflow with two tasks that fetch GitHub data:
-# 1. `get_repo_info` – Retrieves basic information about a repository
-# 2. `get_contributors` – Fetches the list of contributors using the URL from the first task
-# 
-# The second task includes retry logic for resilience against API rate limiting or 
-# network issues. We'll orchestrate everything with a flow that logs the repository's
-# star count and contributor count.
-# 
-# ### Running the example
-# ```bash
-# python 02_sdk_concepts/01_tasks.py
-# ```
+By decorating a function with `@task`, you gain:
 
+* **Input/output tracking** – Prefect automatically logs parameters and return values
+* **State management** – Each task executes with a lifecycle (pending → running → completed)
+* **Concurrency control** – Run multiple tasks in parallel with configurable limits
+* **Result persistence** – Store outputs and reuse them across flow runs
+* **Caching** – Skip duplicate work when inputs haven't changed
+* **Retries** – Automatically recover from transient failures
+* **Observability** – Monitor, inspect, and debug task execution in the UI
 
+### Tasks are composable
+
+Tasks work together through simple input/output connections. A task returns a regular 
+Python object, which can be passed to other tasks or used directly within a flow.
+This creates a clean dependency graph that Prefect uses for execution.
+
+### In this example
+
+We'll build a simple workflow with two tasks that fetch GitHub data:
+1. `get_repo_info` – Retrieves basic information about a repository
+2. `get_contributors` – Fetches the list of contributors using the URL from the first task
+
+The second task includes retry logic for resilience against API rate limiting or 
+network issues. We'll orchestrate everything with a flow that logs the repository's
+star count and contributor count.
+
+### Running the example
+```bash
+python 02_sdk_concepts/01_tasks.py
+```
+
+```python
 import httpx
 from prefect import flow, task
 
-# ---------------------------------------------------------------------------
-# Task definitions -----------------------------------------------------------
-# ---------------------------------------------------------------------------
+```
 
-# ## Task definitions
-# 
-# First, we'll define two tasks that interact with the GitHub API.
-# Notice how each task:
-# 1. Has a focused purpose (single responsibility)
-# 2. Takes explicit inputs and returns processed outputs
-# 3. Includes helpful docstrings
+---------------------------------------------------------------------------
+Task definitions -----------------------------------------------------------
+---------------------------------------------------------------------------
 
+## Task definitions
+
+First, we'll define two tasks that interact with the GitHub API.
+Notice how each task:
+1. Has a focused purpose (single responsibility)
+2. Takes explicit inputs and returns processed outputs
+3. Includes helpful docstrings
+
+```python
 @task(name="fetch-repo-info")
 def get_repo_info(repo_owner: str, repo_name: str) -> dict:
     """Fetch complete repository metadata from the GitHub API.
@@ -113,19 +106,22 @@ def get_contributors(repo_info: dict) -> list[dict]:
     return response.json()
 
 
-# ---------------------------------------------------------------------------
-# Flow definition ------------------------------------------------------------
-# ---------------------------------------------------------------------------
+```
 
-# ## Flow definition
-#
-# Now we'll create a flow that orchestrates our tasks. The flow:
-# 1. Takes optional repo owner/name parameters
-# 2. Calls the first task to get repository information
-# 3. Extracts and displays the star count
-# 4. Calls the second task to get contributor information
-# 5. Displays the total number of contributors
+---------------------------------------------------------------------------
+Flow definition ------------------------------------------------------------
+---------------------------------------------------------------------------
 
+## Flow definition
+
+Now we'll create a flow that orchestrates our tasks. The flow:
+1. Takes optional repo owner/name parameters
+2. Calls the first task to get repository information
+3. Extracts and displays the star count
+4. Calls the second task to get contributor information
+5. Displays the total number of contributors
+
+```python
 @flow(
     log_prints=True,
     retries=2,
@@ -140,36 +136,39 @@ def repo_info(repo_owner: str = "PrefectHQ", repo_name: str = "prefect") -> None
     contributors = get_contributors(repo)
     print(f"Contributors 👷 : {len(contributors)}")
 
-# ### What just happened?
-# 
-# When you run this script, Prefect:
-# 
-# 1. Registered the two task functions with the Prefect engine
-# 2. Created a flow to coordinate their execution
-# 3. Called the first task `get_repo_info` to retrieve repository data
-# 4. Logged the star count from that data
-# 5. Passed the repository data to the `get_contributors` task
-# 6. Counted and displayed the number of contributors
-# 
-# If any API calls had failed, Prefect would have automatically retried the
-# `get_contributors` task according to its retry policy (twice with 5-second delays).
-# 
-# ### Why tasks matter
-# 
-# Tasks are the foundation of scalable, maintainable data workflows:
-# 
-# * **Isolation**: Each task is an independently testable unit
-# * **Resilience**: Tasks can retry on failure without rerunning the entire flow
-# * **Visibility**: Tasks appear as separate nodes in the Prefect UI
-# * **Performance**: Tasks can run concurrently or be distributed across workers
-# * **Reusability**: Tasks can be imported and shared across multiple flows
-# 
-# By breaking complex processes into discrete tasks, you gain both operational
-# benefits (resilience, scalability) and development advantages (readability,
-# maintainability, testing).
+```
 
-# ## Local execution
+### What just happened?
 
+When you run this script, Prefect:
+
+1. Registered the two task functions with the Prefect engine
+2. Created a flow to coordinate their execution
+3. Called the first task `get_repo_info` to retrieve repository data
+4. Logged the star count from that data
+5. Passed the repository data to the `get_contributors` task
+6. Counted and displayed the number of contributors
+
+If any API calls had failed, Prefect would have automatically retried the
+`get_contributors` task according to its retry policy (twice with 5-second delays).
+
+### Why tasks matter
+
+Tasks are the foundation of scalable, maintainable data workflows:
+
+* **Isolation**: Each task is an independently testable unit
+* **Resilience**: Tasks can retry on failure without rerunning the entire flow
+* **Visibility**: Tasks appear as separate nodes in the Prefect UI
+* **Performance**: Tasks can run concurrently or be distributed across workers
+* **Reusability**: Tasks can be imported and shared across multiple flows
+
+By breaking complex processes into discrete tasks, you gain both operational
+benefits (resilience, scalability) and development advantages (readability,
+maintainability, testing).
+
+## Local execution
+
+```python
 if __name__ == "__main__":
     repo_info()
 
