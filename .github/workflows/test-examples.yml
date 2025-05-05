@@ -1,0 +1,98 @@
+# name: Test Prefect Examples
+
+# on:
+#   pull_request:
+#     branches: [ main ]
+#     paths:
+#       - '**.py'
+#       - 'internal/**'
+#       - '.github/workflows/test-examples.yml'
+
+# jobs:
+#   test-examples:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.10'
+#           cache: 'pip'
+
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r internal/requirements.txt
+#           # Install prefect and any other dependencies needed for examples
+#           pip install prefect>=2.0.0
+
+#       - name: Get changed files
+#         id: changed-files
+#         run: |
+#           echo "CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep '\.py$' | grep -v 'internal/' | tr '\n' ' ')" >> $GITHUB_ENV
+
+#       - name: Generate test plan
+#         run: |
+#           python -m internal.generate_test_plan --changed-files ${{ env.CHANGED_FILES }} > test_plan.txt
+#           cat test_plan.txt
+
+#       - name: Run tests on changed examples
+#         run: |
+#           # Parse the test plan and run each example
+#           EXAMPLES=$(grep "^- " test_plan.txt | sed 's/^- //' || echo "")
+          
+#           if [ -z "$EXAMPLES" ]; then
+#             echo "No examples to test."
+#             exit 0
+#           fi
+          
+#           echo "Running tests for the following examples:"
+#           echo "$EXAMPLES"
+#           echo "--------------------------------------"
+          
+#           # Create a temporary directory for modified examples
+#           TEMP_DIR=$(mktemp -d)
+#           trap "rm -rf $TEMP_DIR" EXIT
+          
+#           FAILED=0
+#           for example in $EXAMPLES; do
+#             echo "Testing example: $example"
+            
+#             # Create a temporary copy with frontmatter removed
+#             temp_file="$TEMP_DIR/$(basename "$example")"
+            
+#             # Remove frontmatter (everything between the first two '---' lines)
+#             awk '
+#               BEGIN { in_frontmatter=0; frontmatter_end=0; }
+#               /^---$/ { 
+#                 if (in_frontmatter == 0) { 
+#                   in_frontmatter=1; 
+#                   next; 
+#                 } else if (frontmatter_end == 0) { 
+#                   frontmatter_end=1; 
+#                   next; 
+#                 }
+#               }
+#               { if (in_frontmatter == 0 || frontmatter_end == 1) print $0; }
+#             ' "$example" > "$temp_file"
+            
+#             # Run the modified example
+#             if python "$temp_file"; then
+#               echo "✅ Example $example passed."
+#             else
+#               echo "❌ Example $example failed."
+#               FAILED=$((FAILED+1))
+#             fi
+#             echo "--------------------------------------"
+#           done
+          
+#           # Report summary
+#           if [ $FAILED -gt 0 ]; then
+#             echo "❌ $FAILED examples failed."
+#             exit 1
+#           else
+#             echo "✅ All examples passed."
+#           fi 
