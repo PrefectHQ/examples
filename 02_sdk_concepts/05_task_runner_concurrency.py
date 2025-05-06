@@ -1,7 +1,3 @@
-# /// script
-# dependencies = ["prefect"]
-# ///
-
 # ---
 # title: Task Runner Concurrency
 # description: Learn how to parallelize your workflows using Prefect's ThreadPoolTaskRunner and task mapping.
