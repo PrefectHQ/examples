@@ -1,6 +1,12 @@
 name: Test Prefect Examples
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'examples/**.py'
+      - 'internal/**'
+      - '.github/workflows/test-examples.yml'
   pull_request:
     branches: [ main ]
     paths:
