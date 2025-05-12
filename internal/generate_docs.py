@@ -36,9 +36,7 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
             '.venv/',
             'venv/',
             'env/',
-            'node_modules/',
-            'modal-examples/',  # Skip the cloned Modal examples
-        ]
+            'node_modules/'        ]
         return not any(example.repo_filename.startswith(prefix) for prefix in unwanted_prefixes)
     
     examples = [ex for ex in examples if should_include_example(ex)]
@@ -53,10 +51,18 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
         # Get markdown content
         markdown_content = render_example_md(example)
         
-        # Create category from directory structure
+        # Create category from directory structure - handle both 'examples/' and 'curriculum/' prefixes
         parts = example.repo_filename.split('/')
+        
         if len(parts) > 1:
-            category = parts[0]
+            if parts[0] == 'examples' and len(parts) > 2:
+                # Take the directory after 'examples' as the category
+                category = parts[1]
+            elif parts[0] == 'curriculum':
+                # For curriculum files, use 'curriculum' as the top-level category
+                category = 'curriculum'
+            else:
+                category = "misc"
         else:
             category = "misc"
         
@@ -69,8 +75,8 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
         category_dir = docs_dir / category
         category_dir.mkdir(exist_ok=True)
         
-        # Create filename (keep directory structure but change extension)
-        base_filename = Path(example.repo_filename).stem
+        # Create filename (extract the stem of the last part of the path)
+        base_filename = Path(parts[-1]).stem
         doc_filename = category_dir / f"{base_filename}{extension}"
         
         # Write the file
@@ -90,14 +96,20 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
             
             for example in sorted(examples):
                 # Create a nice name and link
-                base_name = Path(example).stem
+                parts = example.split('/')
+                base_name = Path(parts[-1]).stem
                 display_name = base_name.replace('_', ' ').title()
                 
-                # Get directory parts
-                parts = example.split('/')
-                
-                # Create relative link
-                link_path = f"{parts[0]}/{Path(parts[-1]).stem}{extension}"
+                # Create relative link based on the directory structure
+                if parts[0] == 'examples' and len(parts) > 2:
+                    # For examples directory, use the subdirectory as the category
+                    category_part = parts[1]
+                    link_path = f"{category_part}/{Path(parts[-1]).stem}{extension}"
+                elif parts[0] == 'curriculum':
+                    # For curriculum directory, use 'curriculum' as the category
+                    link_path = f"curriculum/{Path(parts[-1]).stem}{extension}"
+                else:
+                    link_path = f"{Path(parts[-1]).stem}{extension}"
                 
                 f.write(f"- [{display_name}]({link_path})\n")
             

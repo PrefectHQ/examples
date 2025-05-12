@@ -1,6 +1,6 @@
 # Prefect Examples Internal Tools
 
-This directory contains a suite of tools for managing, testing, and deploying Prefect example code. Inspired by the internal tools in the [Modal Examples repository](https://github.com/modal-labs/modal-examples), these tools help maintain quality and organization in the example codebase.
+This directory contains a suite of tools for managing, testing, and deploying Prefect example code, these tools help maintain quality and organization in the example codebase.
 
 ## Core Components
 

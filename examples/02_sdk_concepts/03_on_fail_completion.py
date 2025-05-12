@@ -17,7 +17,7 @@
 # 
 # ```python
 # @flow(
-#     on_success=notify_team_success,  # Called when flow completes successfully
+#     on_completion=notify_team_success,  # Called when flow completes successfully
 #     on_failure=alert_ops_team,       # Called when flow fails
 # )
 # def my_important_workflow():
@@ -28,7 +28,7 @@
 # 
 # Callbacks are Python functions that execute at specific flow lifecycle points:
 # 
-# * **on_success** – runs after successful completion (COMPLETED state)
+# * **on_completion** – runs after successful completion (COMPLETED state)
 # * **on_failure** – runs after failure (FAILED state)
 # 
 # Each callback receives two arguments:
@@ -103,8 +103,8 @@ def get_contributors(repo_info: dict):
     log_prints=True,
     retries=2,
     retry_delay_seconds=5,
-    on_failure=log_failure,
-    on_success=log_success,
+    on_failure=[log_failure],
+    on_completion=[log_success],
 )
 def repo_info(repo_owner: str = "PrefectHQ", repo_name: str = "prefect"):
     """

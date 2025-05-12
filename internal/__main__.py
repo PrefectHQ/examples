@@ -102,20 +102,20 @@ def main():
         from .generate_docs import generate_docs
         return generate_docs(args.output_dir, args.extension)
     elif args.command == "test-plan":
-        from .generate_test_plan import main as test_plan_main
-        # Reconstruct argv for the test-plan main function
+        from .tests.generate_test_plan import main as test_plan_main
+        
         test_plan_argv = []
         if args.github_action:
             test_plan_argv.append("--github-action")
-        if args.git_diff:
+        elif args.git_diff:
             test_plan_argv.append("--git-diff")
             test_plan_argv.append(args.git_diff)
-        if args.changed_files:
+        elif args.changed_files:
             test_plan_argv.append("--changed-files")
             test_plan_argv.extend(args.changed_files)
-        if args.format:
-            test_plan_argv.append("--format")
-            test_plan_argv.append(args.format)
+        
+        test_plan_argv.append("--format")
+        test_plan_argv.append(args.format)
         
         old_argv = sys.argv
         sys.argv = [old_argv[0]] + test_plan_argv

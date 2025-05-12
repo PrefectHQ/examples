@@ -1,4 +1,4 @@
-<a href="https://github.com/griggz/prefect-examples-test/blob/main/02_sdk_concepts/03_on_fail_success.py" target="_blank" style="float: right; padding: 6px 12px; background-color: #24292e; color: #ffffff; border-radius: 4px; text-decoration: none; font-size: 0.875rem; font-weight: 500;">View on GitHub</a>
+<a href="https://github.com/griggz/prefect-examples-test/blob/main/examples/02_sdk_concepts/03_on_fail_success.py" target="_blank" style="float: right; padding: 6px 12px; background-color: #24292e; color: #ffffff; border-radius: 4px; text-decoration: none; font-size: 0.875rem; font-weight: 500;">View on GitHub</a>
 
 
 ## Responding intelligently to flow outcomes
@@ -12,7 +12,7 @@ Prefect's callback system provides a clean, declarative way to handle both outco
 
 ```python
 @flow(
-    on_success=notify_team_success,  # Called when flow completes successfully
+    on_completion=notify_team_success,  # Called when flow completes successfully
     on_failure=alert_ops_team,       # Called when flow fails
 )
 def my_important_workflow():
@@ -23,7 +23,7 @@ def my_important_workflow():
 
 Callbacks are Python functions that execute at specific flow lifecycle points:
 
-* **on_success** – runs after successful completion (COMPLETED state)
+* **on_completion** – runs after successful completion (COMPLETED state)
 * **on_failure** – runs after failure (FAILED state)
 
 Each callback receives two arguments:
@@ -102,7 +102,7 @@ def get_contributors(repo_info: dict):
     retries=2,
     retry_delay_seconds=5,
     on_failure=log_failure,
-    on_success=log_success,
+    on_completions=log_success,
 )
 def repo_info(repo_owner: str = "PrefectHQ", repo_name: str = "prefect"):
     """

@@ -130,12 +130,12 @@ def gather_example_files(
             if ext == ".py" and filename.stem != "__init__":
                 if parents:
                     parent_mods = ".".join(parents)
-                    module = f"{parent_mods}.{subdir.stem}.{filename.stem}"
+                    module = f"examples.{parent_mods}.{subdir.stem}.{filename.stem}"
                 else:
-                    module = f"{subdir.stem}.{filename.stem}"
+                    module = f"examples.{subdir.stem}.{filename.stem}"
                 data = jupytext.read(open(filename_abs, encoding="utf-8"), config=config)
                 metadata = data["metadata"]["jupytext"].get("root_level_metadata", {})
-                cmd = metadata.get("cmd", ["modal", "run", repo_filename])
+                cmd = metadata.get("cmd", ["prefect", "run", repo_filename])
                 args = metadata.get("args", [])
                 tags = metadata.get("tags", [])
                 env = metadata.get("env", dict())
@@ -161,16 +161,17 @@ def gather_example_files(
 
 
 def get_examples() -> Iterator[Example]:
-    """Yield all Python module files and asset files relevant to building modal.com/docs."""
-    if not EXAMPLES_ROOT.exists():
+    """Yield all Python module files and asset files relevant to building docs"""
+    examples_dir = EXAMPLES_ROOT / "examples"
+    if not examples_dir.exists():
         raise Exception(
-            f"Can't find directory {EXAMPLES_ROOT}. You might need to clone the modal-examples repo there."
+            f"Can't find directory {examples_dir}. You might need to clone the examples repo there."
         )
 
     ignored = []
     for subdir in sorted(
         p
-        for p in EXAMPLES_ROOT.iterdir()
+        for p in examples_dir.iterdir()
         if p.is_dir()
         and not p.name.startswith(".")
         and not p.name.startswith("internal")

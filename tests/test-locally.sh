@@ -52,7 +52,7 @@ fi
 CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD | grep '\.py$' | grep -v 'internal/' || echo "")
 echo "Changed files: $CHANGED_FILES"
 
-# 3. Generate test plan
+# 3. Generatei test plan
 echo "Generating test plan..."
 python -m internal.generate_test_plan --changed-files $CHANGED_FILES > test_plan.txt
 cat test_plan.txt

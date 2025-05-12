@@ -3,7 +3,7 @@
 import pytest
 from pathlib import Path
 
-from .utils import (
+from ..utils import (
     EXAMPLES_ROOT,
     Example,
     ExampleType,

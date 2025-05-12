@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from typing import List, Set
 
-from .utils import EXAMPLES_ROOT, Example, get_examples
+from ..utils import EXAMPLES_ROOT, Example, get_examples
 
 
 def get_changed_files_from_env() -> List[str]:
@@ -60,7 +60,7 @@ def get_examples_to_test(changed_files: List[str]) -> List[Example]:
     # Get all Python files that have changed
     changed_py_files = {
         f for f in changed_files 
-        if f.endswith(".py") and not f.startswith("internal/")
+        if f.endswith(".py") and f.startswith("examples/") and not f.endswith("__init__.py")
     }
     
     # Find examples that correspond to changed files

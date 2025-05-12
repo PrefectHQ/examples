@@ -7,4 +7,4 @@ pydantic>=1.10.14
 mypy==1.2.0
 ruff==0.9.6
 fastapi
-prefect>=2.0.0 
+prefect>=3.3.5

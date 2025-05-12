@@ -1,27 +1,29 @@
 import importlib
 import json
 import pathlib
-import sys
-
 import pytest
-from .utils import (
+import re
+import sys
+from typing import List
+
+from ..utils import (
     EXAMPLES_ROOT,
+    Example,
     ExampleType,
     get_examples,
     get_examples_json,
-    render_example_md,
 )
 
-examples = [ex for ex in get_examples() if ex.type == ExampleType.MODULE]
-examples = [ex for ex in examples if ex.metadata.get("pytest", True)]
-example_ids = [ex.module for ex in examples]
+examples = list(get_examples())
+example_ids = [e.repo_filename for e in examples]
 
 
-@pytest.fixture(autouse=False)
-def add_root_to_syspath(monkeypatch):
-    sys.path.append(str(EXAMPLES_ROOT))
+@pytest.fixture
+def add_root_to_syspath():
+    """Add EXAMPLES_ROOT to sys.path."""
+    sys.path.insert(0, str(EXAMPLES_ROOT))
     yield
-    sys.path.pop()
+    sys.path.pop(0)
 
 
 @pytest.mark.parametrize("example", examples, ids=example_ids)
@@ -34,27 +36,28 @@ def test_filename(example):
 def test_import(example, add_root_to_syspath):
     """Test that the example can be imported."""
     if example.module:
-        importlib.import_module(example.module)
+        # Extract the module path relative to examples directory
+        module_path = example.module
+        if module_path.startswith("examples."):
+            module_path = module_path[len("examples."):]
+        importlib.import_module(module_path)
 
 
 @pytest.mark.parametrize("example", examples, ids=example_ids)
 def test_example_metadata(example):
-    """Test that the example metadata is valid."""
-    if example.metadata:
-        if "deploy" in example.metadata:
-            assert isinstance(example.metadata["deploy"], bool)
-        
-        if "cmd" in example.metadata:
-            assert isinstance(example.metadata["cmd"], list)
-            
-        if "pytest" in example.metadata:
-            assert isinstance(example.metadata["pytest"], bool)
-            
-        if "env" in example.metadata:
-            assert isinstance(example.metadata["env"], dict)
-            for key, value in example.metadata["env"].items():
-                assert isinstance(key, str)
-                assert isinstance(value, str)
+    """Test that example metadata is valid."""
+    # Repo filename should be a valid relative path
+    assert not example.repo_filename.startswith("/")
+    assert pathlib.Path(example.repo_filename).exists()
+    
+    # Each example should have metadata
+    assert example.metadata is not None
+    
+    # If deploy is True, the example should have a cmd
+    if example.metadata.get("deploy", False):
+        assert example.cli_args is not None
+        assert len(example.cli_args) > 0
+        assert example.cli_args[0] in ["prefect", "python"]
 
 
 def test_get_examples_json():
