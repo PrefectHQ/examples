@@ -2,13 +2,13 @@ name: Test Prefect Examples
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
     paths:
       - 'examples/**.py'
       - 'internal/**'
       - '.github/workflows/test-examples.yml'
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
     paths:
       - 'examples/**.py'
       - 'internal/**'
@@ -38,11 +38,17 @@ jobs:
       - name: Get changed files
         id: changed-files
         run: |
-          echo "CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep 'examples/.*\.py$' | grep -v '__' | tr '\n' ' ')" >> $GITHUB_ENV
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep 'examples/.*\.py$' | grep -v '__' | tr '\n' ' ' || echo "")
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
 
       - name: Generate test plan
         run: |
-          python -m internal.tests.generate_test_plan --changed-files ${{ env.CHANGED_FILES }} > test_plan.txt
+          if [ -z "${{ env.CHANGED_FILES }}" ]; then
+            echo "No example files were changed. Skipping tests."
+            echo "No examples to test." > test_plan.txt
+          else
+            python -m internal.tests.generate_test_plan --changed-files ${{ env.CHANGED_FILES }} > test_plan.txt
+          fi
           cat test_plan.txt
 
       - name: Run tests on changed examples
