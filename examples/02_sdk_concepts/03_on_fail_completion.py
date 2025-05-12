@@ -1,8 +1,8 @@
 # ---
 # title: Flow callbacks
-# description: Learn how to respond dynamically to success or failure of your workflows with Prefect's built-in callback system.
+# description: Learn how to respond dynamically to completion or failure of your workflows with Prefect's built-in callback system.
 # dependencies: ["prefect", "httpx"]
-# cmd: ["python", "02_sdk_concepts/03_on_fail_success.py"]
+# cmd: ["python", "02_sdk_concepts/03_on_fail_completion.py"]
 # tags: [callbacks, logging]
 # ---
 

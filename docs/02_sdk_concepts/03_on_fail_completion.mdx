@@ -1,4 +1,4 @@
-<a href="https://github.com/griggz/prefect-examples-test/blob/main/examples/02_sdk_concepts/03_on_fail_success.py" target="_blank" style="float: right; padding: 6px 12px; background-color: #24292e; color: #ffffff; border-radius: 4px; text-decoration: none; font-size: 0.875rem; font-weight: 500;">View on GitHub</a>
+<a href="https://github.com/griggz/prefect-examples-test/blob/main/02_sdk_concepts/03_on_fail_completion.py" target="_blank" style="float: right; padding: 6px 12px; background-color: #24292e; color: #ffffff; border-radius: 4px; text-decoration: none; font-size: 0.875rem; font-weight: 500;">View on GitHub</a>
 
 
 ## Responding intelligently to flow outcomes
@@ -101,8 +101,8 @@ def get_contributors(repo_info: dict):
     log_prints=True,
     retries=2,
     retry_delay_seconds=5,
-    on_failure=log_failure,
-    on_completions=log_success,
+    on_failure=[log_failure],
+    on_completion=[log_success],
 )
 def repo_info(repo_owner: str = "PrefectHQ", repo_name: str = "prefect"):
     """

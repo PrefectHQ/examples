@@ -162,6 +162,7 @@ def gather_example_files(
 
 def get_examples() -> Iterator[Example]:
     """Yield all Python module files and asset files relevant to building docs"""
+    # Process examples directory
     examples_dir = EXAMPLES_ROOT / "examples"
     if not examples_dir.exists():
         raise Exception(
@@ -180,6 +181,59 @@ def get_examples() -> Iterator[Example]:
         yield from gather_example_files(
             parents=[], subdir=subdir, ignored=ignored, recurse=True
         )
+    
+    # Process PACC directory
+    pacc_dir = EXAMPLES_ROOT / "pacc"
+    if pacc_dir.exists():
+        # Handle subdirectories
+        for subdir in sorted(
+            p
+            for p in pacc_dir.iterdir()
+            if p.is_dir()
+            and not p.name.startswith(".")
+            and not p.name.startswith("internal")
+            and not p.name.startswith("misc")
+        ):
+            yield from gather_example_files(
+                parents=[], subdir=subdir, ignored=ignored, recurse=True
+            )
+        
+        # Handle Python files directly in PACC directory
+        for file in sorted(
+            p
+            for p in pacc_dir.iterdir()
+            if p.is_file() and p.suffix == ".py" and p.name != "__init__.py"
+        ):
+            filename_abs = str(file.resolve())
+            repo_filename = f"pacc/{file.name}"
+            module = f"pacc.{file.stem}"
+            
+            config = jupytext.config.JupytextConfiguration(
+                root_level_metadata_as_raw_cell=False
+            )
+            
+            try:
+                data = jupytext.read(open(filename_abs, encoding="utf-8"), config=config)
+                metadata = data["metadata"]["jupytext"].get("root_level_metadata", {})
+            except Exception:
+                metadata = {}
+                
+            cmd = metadata.get("cmd", ["prefect", "run", repo_filename])
+            args = metadata.get("args", [])
+            tags = metadata.get("tags", [])
+            env = metadata.get("env", dict())
+            
+            yield Example(
+                type=ExampleType.MODULE,
+                filename=filename_abs,
+                metadata=metadata,
+                module=module,
+                repo_filename=repo_filename,
+                cli_args=(cmd + args),
+                stem=file.stem,
+                tags=tags,
+                env=env,
+            )
 
 
 def get_examples_json():

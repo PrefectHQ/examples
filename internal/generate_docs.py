@@ -9,6 +9,7 @@ import os
 import sys
 import argparse
 from pathlib import Path
+import re
 
 from .utils import get_examples, render_example_md
 
@@ -55,14 +56,8 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
         parts = example.repo_filename.split('/')
         
         if len(parts) > 1:
-            if parts[0] == 'examples' and len(parts) > 2:
-                # Take the directory after 'examples' as the category
-                category = parts[1]
-            elif parts[0] == 'curriculum':
-                # For curriculum files, use 'curriculum' as the top-level category
-                category = 'curriculum'
-            else:
-                category = "misc"
+            # Simply use the directory part as the category to maintain folder structure
+            category = parts[0]
         else:
             category = "misc"
         
@@ -92,7 +87,9 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
         f.write("This documentation is auto-generated from the Prefect Examples repository.\n\n")
         
         for category, examples in sorted(example_categories.items()):
-            f.write(f"## {category.replace('_', ' ').title()}\n\n")
+            # Clean up category name for display - remove numeric prefixes like "01_", "02_", etc.
+            display_category = re.sub(r'^\d+_', '', category).replace('_', ' ').title()
+            f.write(f"## {display_category}\n\n")
             
             for example in sorted(examples):
                 # Create a nice name and link
@@ -108,8 +105,11 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
                 elif parts[0] == 'curriculum':
                     # For curriculum directory, use 'curriculum' as the category
                     link_path = f"curriculum/{Path(parts[-1]).stem}{extension}"
+                elif parts[0] == 'pacc':
+                    # For PACC directory, use 'pacc' as the category
+                    link_path = f"pacc/{Path(parts[-1]).stem}{extension}"
                 else:
-                    link_path = f"{Path(parts[-1]).stem}{extension}"
+                    link_path = f"{category}/{Path(parts[-1]).stem}{extension}"
                 
                 f.write(f"- [{display_name}]({link_path})\n")
             
