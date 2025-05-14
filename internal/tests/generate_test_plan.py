@@ -10,10 +10,9 @@ import argparse
 import json
 import os
 import sys
-from pathlib import Path
-from typing import List, Set
+from typing import List
 
-from ..utils import EXAMPLES_ROOT, Example, get_examples
+from ..utils import Example, get_examples
 
 
 def get_changed_files_from_env() -> List[str]:

@@ -1,8 +1,4 @@
 """Test the main functionality of the internal tools."""
-
-import pytest
-from pathlib import Path
-
 from ..utils import Example, ExampleType, get_examples, parse_frontmatter
 
 

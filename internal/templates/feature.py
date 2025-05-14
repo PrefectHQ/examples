@@ -90,17 +90,8 @@ def example_flow(param1="default_value"):
 # 3. [Third step in the execution]
 # 4. [Fourth step in the execution]
 # 
+### [ Pick randomly between "Why This Is Important" or "Why This Matters" or something similar]
 # **[Key insight or important takeaway]** [Brief explanation of why this matters]
-# 
-# [Feature]'s benefits include:
-# * **[Benefit 1]** – [Brief explanation]
-# * **[Benefit 2]** – [Brief explanation]
-# * **[Benefit 3]** – [Brief explanation]
-# * **[Benefit 4]** – [Brief explanation]
-# 
-# ### [ Pick randomly between "Why This Is Important" or "Why This Matters" or something similar]
-# 
-# [1-2 paragraphs explaining the broader significance of this feature in real-world data engineering contexts. Discuss how it solves common pain points, improves reliability/productivity, or enables new capabilities. Include specific scenarios where this feature makes a critical difference.]
 # 
 # [Closing paragraph that summarizes the value proposition of the feature]
 

@@ -1,6 +1,4 @@
 """Tests for the utils module."""
-
-import pytest
 from pathlib import Path
 
 from ..utils import (
@@ -8,7 +6,6 @@ from ..utils import (
     Example,
     ExampleType,
     parse_frontmatter,
-    render_example_md,
     get_example_files,
     get_examples,
     get_examples_json,

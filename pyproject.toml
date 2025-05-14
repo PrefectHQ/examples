@@ -1,7 +1,6 @@
 [project]
 name = "prefect-examples"
 version = "0.1.0"
-<<<<<<< HEAD
 description = "Examples of how to use Prefect"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -10,11 +9,3 @@ dependencies = ["prefect>=3.0.0"]
 
 [project.urls]
 Code = "https://github.com/PrefectHQ/examples"
-=======
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "prefect>=3.3.5",
-]
->>>>>>> second-repo/main

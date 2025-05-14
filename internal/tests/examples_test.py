@@ -2,7 +2,6 @@ import importlib
 import json
 import pathlib
 import pytest
-import re
 import sys
 from typing import List
 

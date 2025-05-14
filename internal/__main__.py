@@ -7,7 +7,6 @@ import argparse
 import sys
 from .utils import get_examples
 from .run_example import run_script, run_single_example, run_random_example, list_examples
-from .deploy import deploy_example, deploy_examples
 
 def main():
     parser = argparse.ArgumentParser(
@@ -26,13 +25,6 @@ def main():
     
     # List command
     list_parser = subparsers.add_parser("list", help="List all examples")
-    
-    # Deploy command
-    deploy_parser = subparsers.add_parser("deploy", help="Deploy examples")
-    deploy_group = deploy_parser.add_mutually_exclusive_group(required=True)
-    deploy_group.add_argument("-e", "--example", help="Deploy a specific example by name or path")
-    deploy_group.add_argument("-a", "--all", action="store_true", help="Deploy all examples marked for deployment")
-    deploy_group.add_argument("-l", "--list", action="store_true", help="List examples that would be deployed but don't deploy them")
     
     # Generate docs command
     docs_parser = subparsers.add_parser("generate-docs", help="Generate documentation from examples")
@@ -76,28 +68,6 @@ def main():
     elif args.command == "list":
         list_examples()
         return 0
-    elif args.command == "deploy":
-        if args.list:
-            from .deploy import main as deploy_main
-            sys.argv = ["deploy", "-l"]
-            return deploy_main()
-        elif args.all:
-            return deploy_examples()
-        elif args.example:
-            examples = list(get_examples())
-            matching_examples = [e for e in examples if e.repo_filename == args.example or args.example in e.repo_filename]
-            
-            if not matching_examples:
-                print(f"No examples found matching '{args.example}'")
-                return 1
-            
-            if len(matching_examples) > 1:
-                print(f"Multiple examples found matching '{args.example}':")
-                for e in matching_examples:
-                    print(f"- {e.repo_filename}")
-                return 1
-            
-            return deploy_example(matching_examples[0])
     elif args.command == "generate-docs":
         from .generate_docs import generate_docs
         return generate_docs(args.output_dir, args.extension)
