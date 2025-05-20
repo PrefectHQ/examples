@@ -8,29 +8,30 @@ This repository contains narrative-driven, opinionated examples that showcase Pr
 
 ## Repository Structure
 
-- **examples/**: The main examples directory, organized by topic:
-  - **01_getting_started/**: Basic concepts and first steps with Prefect
-  - **02_sdk_concepts/**: Deeper exploration of Prefect's Python SDK
-  - **03_cloud_concepts/**: Features related to Prefect Cloud and remote execution
+- **examples/** – Narrative-driven Python examples grouped by topic  
+  - **01_getting_started/** – First steps with Prefect  
+  - **02_flows/** – Deeper exploration of various flow scenarios 
+  - **03_misc/** – Various stand-alone Prefect flows ready to copy-paste into projects
 
-- **pacc/**: (Prefect Accelerator) A guided learning curriculum with structured learning paths progressing from fundamentals to advanced topics:
-  - Organized in sequential phases (01-07) covering foundations to advanced integrations
-  - Each module builds on previous knowledge and points to relevant examples
+- **pal/** – The *Prefect Accelerated Learning* curriculum, a step-by-step learning path  
 
-- **docs/**: Generated MDX documentation files converted from Python examples
-  - Contains the same examples and learning paths but in a format readable by MDSvex
+- **flows/** – Stand-alone Prefect flow scripts ready to copy-paste into projects  
 
-- **internal/**: Tools for testing, deploying, and maintaining the examples
-  - Includes templates and utilities for converting Python files to MDX documentation
+- **apps/** – End-to-end reference applications that orchestrate background tasks with Prefect  
 
-- **tests/**: Test suite to ensure examples work correctly
+- **scripts/** – Utility scripts for interacting with Prefect Cloud or the API  
+
+- **internal/** – Tooling to test, lint, and convert examples into documentation  
+
+- **docs/** – Auto-generated MDX documentation built from example Python files  
 
 ## Documentation Generation
 
 All examples are written as Python files with detailed comments that explain concepts alongside runnable code. These files are then automatically converted to MDX documentation:
 
 ```bash
-python -m internal.generate_docs -o docs
+# Generate documentation into a temporary directory for local testing
+python -m internal generate-docs -o temp/docs
 ```
 
 This process preserves both the narrative explanations and executable code, making the examples both readable as documentation and runnable as demonstrations.
@@ -46,11 +47,11 @@ This process preserves both the narrative explanations and executable code, maki
 
 ```bash
 # Clone the repository
-git clone https://github.com/PrefectHQ/prefect-examples.git
-cd prefect-examples
+git clone https://github.com/PrefectHQ/examples.git
+cd examples
 
-# Set up a virtual environment (optional but recommended)
-python -m venv .venv
+# Create (or re-use) a local virtual environment with uv
+uv venv               # creates .venv in the current directory
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install dependencies using UV
@@ -68,14 +69,11 @@ python examples/01_getting_started/01_hello_world.py
 Or use the included utility script:
 
 ```bash
-# List all examples
-python -m internal.run_example --list
+# List all available examples
+python -m internal run-example -l
 
-# Run a specific example by name
-python -m internal.run_example --example hello_world
-
-# Run a random example
-python -m internal.run_example --random
+# Run a specific example by repository path
+python -m internal run-example -e 01_getting_started/01_hello_world.py
 ```
 
 ## Example Format
@@ -90,6 +88,46 @@ Each example includes:
 
 Examples follow a consistent structure based on templates in the `internal/templates` directory that ensures comprehensive coverage of each feature.
 
-## Contributing
+## How to Contribute 🛠
 
-Contributions to improve existing examples or add new ones are welcome! Please see the contributing guidelines for more information and refer to the template in `internal/templates/TEMPLATE_README.md` when creating new examples.
+We love contributions!  Follow the steps below to add a new example.
+
+1. **Fork & branch**
+
+   ```bash
+   git checkout -b my-new-example
+   ```
+
+2. **Start from a template**
+
+   Copy one of the files in `internal/templates/` (e.g. `feature.py` or `scenario.py`) and rename it to something meaningful inside the appropriate folder (`examples/`). Or use them as context for an llm driven tool. Please keep each pull-request limited to **one new file** so that reviews stay focused. 
+
+3. **Tell the story**
+
+   Fill in the template:
+   - Add YAML front-matter (`title`, `description`, etc.).
+   - Use narrative comments (`#`) to explain the *why* as well as the *how*.
+   - Include runnable code blocks that a reader can copy & paste.
+
+4. **Verify locally**
+a. Test your code:
+    ```
+    python -m internal run-example -e example_module/your_new_example.py
+    ```
+    b. Build the documentation for just-added file:
+    ```
+   python -m internal generate-docs -o temp/docs
+   ```
+
+   c. Open temp/docs/<path-to-your-file>.mdx in a browser or editor
+   
+
+5. **Open a pull-request**
+
+   Push your branch and open a PR.  GitHub Actions will rerun tests and rebuild docs to make sure everything still passes.
+
+6. **Celebrate 🎉**
+
+   Once the PR is merged, your example will automatically appear in the next docs build.
+
+For larger changes, open an issue first so we can discuss the design before you start coding.

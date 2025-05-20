@@ -102,12 +102,9 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
                     # For examples directory, use the subdirectory as the category
                     category_part = parts[1]
                     link_path = f"{category_part}/{Path(parts[-1]).stem}{extension}"
-                elif parts[0] == 'curriculum':
-                    # For curriculum directory, use 'curriculum' as the category
-                    link_path = f"curriculum/{Path(parts[-1]).stem}{extension}"
-                elif parts[0] == 'pacc':
+                elif parts[0] == 'pal':
                     # For PACC directory, use 'pacc' as the category
-                    link_path = f"pacc/{Path(parts[-1]).stem}{extension}"
+                    link_path = f"pal/{Path(parts[-1]).stem}{extension}"
                 else:
                     link_path = f"{category}/{Path(parts[-1]).stem}{extension}"
                 

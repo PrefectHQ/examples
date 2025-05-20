@@ -1,5 +1,5 @@
 """Test the main functionality of the internal tools."""
-from ..utils import Example, ExampleType, get_examples, parse_frontmatter
+from ..utils import ExampleType, get_examples, parse_frontmatter
 
 
 def test_get_examples():

@@ -3,7 +3,7 @@ import re
 import warnings
 from enum import Enum
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Iterator, Optional, Tuple
 
 from pydantic import BaseModel
 
@@ -85,7 +85,7 @@ This is the source code for **{example.module}**.
     # Prepend a "View on GitHub" button linking to the source file ---------
     # ---------------------------------------------------------------------
 
-    github_base_url = "https://github.com/griggz/prefect-examples-test/blob/main/"
+    github_base_url = "https://github.com/prefecthq/examples/blob/examples-markdown/examples/"
     github_url = f"{github_base_url}{example.repo_filename}"
 
     # Using raw HTML for precise placement; most Markdown/MDX renderers will
@@ -239,6 +239,38 @@ def get_examples() -> Iterator[Example]:
 def get_examples_json():
     examples = list(ex.dict() for ex in get_examples())
     return json.dumps(examples)
+
+
+# ---------------------------------------------------------------------------
+# Frontmatter parsing -------------------------------------------------------
+# ---------------------------------------------------------------------------
+
+
+def parse_frontmatter(content: str) -> Tuple[Optional[dict], str]:
+    """Extract YAML front-matter from a file and return (metadata, code).
+
+    If no front-matter block (bounded by `---` lines) is found, returns
+    ``(None, content)``.
+    """
+
+    frontmatter_pattern = re.compile(r"^---\s*$([\s\S]*?)^---\s*$", re.MULTILINE)
+    match = frontmatter_pattern.search(content)
+
+    if not match:
+        return None, content
+
+    # Attempt to parse YAML safely, but fallback to an empty dict on error to
+    # avoid introducing a runtime dependency (PyYAML).
+    yaml_text = match.group(1)
+    try:
+        import yaml  # optional dependency
+
+        metadata = yaml.safe_load(yaml_text) or {}
+    except Exception:
+        metadata = {}
+
+    cleaned_content = content[: match.start()] + content[match.end() :]
+    return metadata, cleaned_content.strip()
 
 
 if __name__ == "__main__":

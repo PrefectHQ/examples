@@ -5,8 +5,7 @@ Main entry point for running the internal tools.
 
 import argparse
 import sys
-from .utils import get_examples
-from .run_example import run_script, run_single_example, run_random_example, list_examples
+from .run_example import run_single_example, run_random_example, list_examples
 
 def main():
     parser = argparse.ArgumentParser(

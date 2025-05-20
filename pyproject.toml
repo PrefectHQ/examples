@@ -5,7 +5,14 @@ description = "Examples of how to use Prefect"
 readme = "README.md"
 requires-python = ">=3.9"
 
-dependencies = ["prefect>=3.0.0"]
+dependencies = [
+    "beautifulsoup4>=4.13.4",
+    "jupytext>=1.17.1",
+    "pandas>=2.2.3",
+    "prefect>=3.0.0",
+    "pytest>=8.3.5",
+    "requests>=2.32.3",
+]
 
 [project.urls]
 Code = "https://github.com/PrefectHQ/examples"

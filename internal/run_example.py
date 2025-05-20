@@ -18,9 +18,23 @@ def run_script(example):
     print(f"Running: {example.repo_filename}")
     print(f"CLI args: {example.cli_args}")
     
+    # Ensure path correctness for file-based commands
+    cli_args = [str(x) for x in example.cli_args]
+
+    # Heuristic: if the second arg looks like a .py file path but does not exist,
+    # try prefixing it with "examples/" (repo-relative path used elsewhere).
+    if len(cli_args) >= 2 and cli_args[1].endswith(".py"):
+        candidate_path = Path(cli_args[1])
+        if not candidate_path.exists():
+            prefixed_path = Path("examples") / candidate_path
+            if prefixed_path.exists():
+                cli_args[1] = str(prefixed_path)
+
+    print(f"Resolved CLI args: {cli_args}")
+
     try:
         process = subprocess.run(
-            [str(x) for x in example.cli_args],
+            cli_args,
             env=os.environ | (example.env or {}),
             timeout=TIMEOUT,
         )
@@ -45,7 +59,7 @@ def run_script(example):
 
 def list_examples():
     """List all examples in the repository."""
-    examples = get_examples()
+    examples = list(get_examples())
     
     if not examples:
         print("No examples found.")
@@ -53,13 +67,12 @@ def list_examples():
     
     print(f"Found {len(examples)} examples:")
     for example in sorted(examples, key=lambda e: e.repo_filename):
-        deploy_status = "✅" if example.metadata and example.metadata.get("deploy", False) else "❌"
-        print(f"{deploy_status} {example.repo_filename}")
+        print(example.repo_filename)
 
 
 def run_single_example(example_name_or_path):
     """Run a single example by name or path."""
-    examples = get_examples()
+    examples = list(get_examples())
     
     # First try exact path match
     matching_examples = [e for e in examples if e.repo_filename == example_name_or_path]
@@ -87,7 +100,7 @@ def run_single_example(example_name_or_path):
 
 def run_random_example():
     """Run a random example from the repository."""
-    examples = get_examples()
+    examples = list(get_examples())
     
     if not examples:
         print("No examples found.")

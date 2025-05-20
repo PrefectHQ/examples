@@ -2,110 +2,102 @@
 # title: Hello, world!
 # description: Your first steps with Prefect – learn how to create a basic flow and understand core concepts.
 # dependencies: ["prefect"]
-# cmd: ["python", "01_getting_started/hello_world.py"]
+# cmd: ["python", "01_getting_started/01_hello_world.py"]
 # tags: [getting_started, basics]
 # ---
 
-# # Welcome to Prefect!
-# 
-# Prefect helps you build, run, and monitor reliable data workflows. Let's start with 
-# the simplest possible example – a "Hello, world!" flow that greets someone by name.
-# 
-# ### What is a flow?
-# 
-# In Prefect, a **flow** is the main building block of your workflows. It's simply a 
-# Python function decorated with `@flow`:
-# 
-# ```python
-# @flow
-# def my_workflow():
-#     # Your workflow logic here
-#     pass
-# ```
-# 
-# Flows can contain regular Python code, call other flows, orchestrate tasks, handle 
-# errors gracefully, and much more. They give you:
-# 
-# * **Automatic logging** – Track inputs, outputs, and runtime
-# * **State management** – Monitor progress through the UI
-# * **Observability** – Gain insights into performance and failures
-# * **Resilience** – Add retries and error handling with minimal code
-# * **Scheduling** – Run workflows on any schedule
-# 
-# ### Installing Prefect
-# 
-# For this example, you only need the core package:
-# 
-# ```bash
-# pip install prefect
-# ```
+# # Hello, world!
 #
-# ### Running the example
-# 
-# Execute the flow locally with:
-# 
-# ```bash
-# python 01_getting_started/hello_world.py
-# ```
-# 
-# Now let's look at the code!
+# Welcome to your first Prefect flow. In under a minute you will:
+# 1. Ship production-ready orchestration code with **zero boilerplate**.
+# 2. See live, structured logs without writing any logging boilerplate.
+# 3. Understand how the very same Python stays portable from a laptop to Kubernetes (or Prefect Cloud).
+#
+# *Pro tip*: change anything in this file and re-run it. Prefect hot-loads your new logic in seconds, no image builds, ever.
+#
+# ## Importing Prefect and setting up
+
+# We start by importing the essential `flow` decorator from Prefect.
+
 from prefect import flow
 
+# ## Defining a flow
 
-# ## Creating your first flow
+# Prefect takes your Python functions and transforms them into flows with enhanced capabilities.
 # 
-# Below we define a simple flow that greets someone by name. Notice:
+# Let's write a simple function that takes a name parameter and prints a greeting.
 # 
-# 1. The `@flow` decorator transforms a regular Python function into a Prefect flow
-# 2. The function takes a parameter with a default value
-# 3. We use `log_prints=True` to capture print statements as logs
-# 
-# The `log_prints=True` parameter is especially helpful because it:
-# * Captures **all** `print()` statements inside the flow
-# * Forwards them to Prefect's logging system
-# * Makes them visible in the Prefect UI and local logs
-# * Saves you from having to use a separate logger
+# To make this function work with Prefect, we just wrap it in the `@flow` decorator.
+
 @flow(log_prints=True)
 def hello(name: str = "Marvin") -> None:
     """Log a friendly greeting."""
     print(f"Hello, {name}!")
 
+# ## Running our flow locally and with parameters
 
-# ## Running your flow
+# Now let's see different ways we can call that flow:
 # 
-# Running a flow is as simple as calling the function. Below we demonstrate:
-# 
-# 1. Calling with the default parameter
-# 2. Overriding the parameter with a custom value
-# 
-# Every time you run the flow, Prefect tracks the execution and maintains a record 
-# of the run state, parameters, logs, and more.
+# 1. As a regular call with default parameters
+# 2. With custom parameters
+# 3. Multiple times to greet different people
+
 if __name__ == "__main__":
-    # 1️⃣ Run the flow with the default parameter
+    # run the flow with default parameters
     hello()  # Logs: "Hello, Marvin!"
+    
+    # run the flow with a different input
+    hello("Marvin")  # Logs: "Hello, Marvin!"
+    
+    # run the flow multiple times for different people
+    crew = ["Zaphod", "Trillian", "Ford"]
+    for name in crew:
+        hello(name)
 
-    # 2️⃣ Run the flow with a different argument
-    hello("Arthur")  # Logs: "Hello, Arthur!"
+# ## What just happened?
 
-# ### What just happened?
+# When we decorated our function with `@flow`, the function was transformed into a Prefect flow. Each time we called it:
 # 
-# When you ran this script, Prefect:
+# 1. Prefect registered the execution as a flow run
+# 2. It tracked all inputs, outputs, and logs
+# 3. It maintained detailed state information about the execution
 # 
-# 1. Registered your `hello` function as a flow
-# 2. Created and executed a flow run with the default parameter "Marvin"
-# 3. Captured the print statement as a log entry
-# 4. Created and executed another flow run with the parameter "Arthur"
+# In short, we took a regular function and enhanced it with observability and tracking capabilities.
+
+# ## But why does this matter?
+
+# This simple example demonstrates Prefect's core value proposition: taking regular Python code and enhancing it with production-grade orchestration capabilities. Let's explore why this matters for real-world data workflows.
+
+
+# ### You can change the code and run it again
+
+# For instance, change the greeting message in the `hello` function to a different message and run the flow again.
+# You'll see your changes immediately reflected in the logs.
+
+# ### You can process more data
+
+# Add more names to the `crew` list or create a larger data set to process. Prefect will handle each execution and track every input and output.
+
+# ### You can run a more complex flow
+
+# The `hello` function is a simple example, but in its place imagine something that matters to you, like:
 # 
-# ### Next steps
+# * ETL processes that extract, transform, and load data
+# * Machine learning training and inference pipelines
+# * API integrations and data synchronization jobs
 # 
-# This simple example only scratches the surface of what Prefect can do. As you 
-# continue, you'll learn about:
+# Prefect lets you orchestrate these operations effortlessly with automatic observability, error handling, and retries.
+
+# ### Key Takeaways
+
+# Remember that Prefect makes it easy to:
+# * Transform regular Python functions into production-ready workflows with just a [decorator](https://docs.prefect.io/v3/develop/write-flows#write-and-run-flows)
+# * Get automatic logging, [retries](https://docs.prefect.io/v3/develop/write-tasks#retries), and observability without extra code
+# * Run the same code anywhere - from your laptop to production
+# * Build complex data pipelines while maintaining simplicity
+# * Track every execution with [detailed logs](https://docs.prefect.io/v3/develop/logging#configure-logging) and state information
+
+# The `@flow` decorator is your gateway to enterprise-grade orchestration - no complex configuration needed!
+#
 # 
-# * **Tasks** – Smaller units of work that make up flows
-# * **Subflows** – Flows that call other flows
-# * **Retries** – Automatic recovery from failures
-# * **Deployments** – Schedule and trigger flows from the API
-# * **Blocks** – Securely store and use configuration
-# 
-# Prefect makes complex workflows and orchestration simple while letting you 
-# write pure Python code without complex DSLs or configuration formats.
+# For more information about the orchestration concepts demonstrated in this example, see the [Prefect documentation](https://docs.prefect.io/).
