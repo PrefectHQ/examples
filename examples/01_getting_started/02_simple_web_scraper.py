@@ -98,14 +98,11 @@ def scrape(urls: List[str] | None = None) -> None:
     
     A regular Python function that composes our tasks together.
     Prefect adds logging and dependency management automatically."""
-    if urls is None:
-        urls = [
-            "https://www.prefect.io/blog/airflow-to-prefect-why-modern-teams-choose-prefect"
-        ]
     
-    for url in urls:
-        content = parse_article(fetch_html(url))
-        print(content if content else "No article content found.")
+    if urls:
+        for url in urls:
+            content = parse_article(fetch_html(url))
+            print(content if content else "No article content found.")
 
 # ## Run it!
 #
@@ -113,7 +110,10 @@ def scrape(urls: List[str] | None = None) -> None:
 # code instantly – no container builds required.
 
 if __name__ == "__main__":
-    scrape()
+    urls = [
+        "https://www.prefect.io/blog/airflow-to-prefect-why-modern-teams-choose-prefect"
+    ]
+    scrape(urls=urls)
 
 # ## What just happened?
 #
@@ -128,9 +128,9 @@ if __name__ == "__main__":
 #
 # ## Key Takeaways
 #
-# • **Less boilerplate, more Python** – You focus on the scraping logic, Prefect adds production features.
-# • **Observability out of the box** – Every run is tracked, making debugging and monitoring trivial.
-# • **Portability** – The same script runs on your laptop today and on Kubernetes tomorrow.
-# • **Reliability** – Retries, timeouts, and state management are just one decorator away.
+# * **Less boilerplate, more Python** – You focus on the scraping logic, Prefect adds production features.
+# * **Observability out of the box** – Every run is tracked, making debugging and monitoring trivial.
+# * **Portability** – The same script runs on your laptop today and on Kubernetes tomorrow.
+# * **Reliability** – Retries, timeouts, and state management are just one decorator away.
 #
 # Happy scraping – and happy orchestrating! 🎉

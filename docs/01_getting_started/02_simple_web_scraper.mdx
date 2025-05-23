@@ -100,14 +100,11 @@ def scrape(urls: List[str] | None = None) -> None:
     
     A regular Python function that composes our tasks together.
     Prefect adds logging and dependency management automatically."""
-    if urls is None:
-        urls = [
-            "https://www.prefect.io/blog/airflow-to-prefect-why-modern-teams-choose-prefect"
-        ]
     
-    for url in urls:
-        content = parse_article(fetch_html(url))
-        print(content if content else "No article content found.")
+    if urls:
+        for url in urls:
+            content = parse_article(fetch_html(url))
+            print(content if content else "No article content found.")
 
 ```
 
@@ -118,7 +115,10 @@ code instantly – no container builds required.
 
 ```python
 if __name__ == "__main__":
-    scrape()
+    urls = [
+        "https://www.prefect.io/blog/airflow-to-prefect-why-modern-teams-choose-prefect"
+    ]
+    scrape(urls=urls)
 
 ```
 

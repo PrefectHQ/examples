@@ -19,7 +19,7 @@
 
 # We start by importing the essential `flow` decorator from Prefect.
 
-from prefect import flow
+from prefect import flow, tags
 
 # ## Defining a flow
 
@@ -44,15 +44,17 @@ def hello(name: str = "Marvin") -> None:
 
 if __name__ == "__main__":
     # run the flow with default parameters
-    hello()  # Logs: "Hello, Marvin!"
+    with tags("test"): # This is a tag that we can use to filter the flow runs in the UI
+        hello()  # Logs: "Hello, Marvin!"
     
-    # run the flow with a different input
-    hello("Marvin")  # Logs: "Hello, Marvin!"
+        # run the flow with a different input
+        hello("Marvin")  # Logs: "Hello, Marvin!"
     
-    # run the flow multiple times for different people
-    crew = ["Zaphod", "Trillian", "Ford"]
-    for name in crew:
-        hello(name)
+        # run the flow multiple times for different people
+        crew = ["Zaphod", "Trillian", "Ford"]
+    
+        for name in crew:
+            hello(name)
 
 # ## What just happened?
 
@@ -61,6 +63,7 @@ if __name__ == "__main__":
 # 1. Prefect registered the execution as a flow run
 # 2. It tracked all inputs, outputs, and logs
 # 3. It maintained detailed state information about the execution
+# 4. Added tags to the flow run to make it easier to find when observing the flow runs in the UI
 # 
 # In short, we took a regular function and enhanced it with observability and tracking capabilities.
 
@@ -91,6 +94,7 @@ if __name__ == "__main__":
 # ### Key Takeaways
 
 # Remember that Prefect makes it easy to:
+#
 # * Transform regular Python functions into production-ready workflows with just a [decorator](https://docs.prefect.io/v3/develop/write-flows#write-and-run-flows)
 # * Get automatic logging, [retries](https://docs.prefect.io/v3/develop/write-tasks#retries), and observability without extra code
 # * Run the same code anywhere - from your laptop to production
