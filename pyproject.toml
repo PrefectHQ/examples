@@ -16,3 +16,13 @@ dependencies = [
 
 [project.urls]
 Code = "https://github.com/PrefectHQ/examples"
+
+[project.scripts]
+generate-docs = "internal.generate_docs:main"
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["internal"]

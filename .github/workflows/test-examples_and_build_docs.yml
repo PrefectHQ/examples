@@ -139,7 +139,7 @@ jobs:
 
       - name: Generate Markdown docs
         run: |
-          python -m internal.generate_docs -o docs
+          uv run generate-docs -o docs
 
       - name: Commit docs back to branch
         run: |

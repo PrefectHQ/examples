@@ -11,7 +11,7 @@ This repository contains narrative-driven, opinionated examples that showcase Pr
 - **examples/** – Narrative-driven Python examples grouped by topic  
   - **01_getting_started/** – First steps with Prefect  
   - **02_flows/** – Deeper exploration of various flow scenarios 
-  - **03_misc/** – Various stand-alone Prefect flows ready to copy-paste into projects
+  - **archive/** – Various stand-alone Prefect flows ready to copy-paste into projects
 
 - **pal/** – The *Prefect Accelerated Learning* curriculum, a step-by-step learning path  
 
@@ -30,8 +30,11 @@ This repository contains narrative-driven, opinionated examples that showcase Pr
 All examples are written as Python files with detailed comments that explain concepts alongside runnable code. These files are then automatically converted to MDX documentation:
 
 ```bash
-# Generate documentation into a temporary directory for local testing
-python -m internal generate-docs -o temp/docs
+# Generate .mdx docs
+uv run generate-docs  # defaults to /docs
+# or
+# create them locally for testing purposes
+python -m internal generate-docs -o temp/docs -e .mdx
 ```
 
 This process preserves both the narrative explanations and executable code, making the examples both readable as documentation and runnable as demonstrations.
@@ -116,7 +119,11 @@ a. Test your code:
     ```
     b. Build the documentation for just-added file:
     ```
-   python -m internal generate-docs -o temp/docs
+   uv run generate-docs  # defaults to /docs
+   ```
+   or
+   ```
+   python -m internal generate-docs -o temp/docs -e .mdx
    ```
 
    c. Open temp/docs/<path-to-your-file>.mdx in a browser or editor

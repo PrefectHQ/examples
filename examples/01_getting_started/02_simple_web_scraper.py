@@ -4,6 +4,7 @@
 # dependencies: ["prefect", "requests", "beautifulsoup4"]
 # cmd: ["python", "01_getting_started/02_simple_web_scraper.py"]
 # tags: [getting_started, webscraping, tasks, retries]
+# draft: false
 # ---
 
 # # Simple web scraper

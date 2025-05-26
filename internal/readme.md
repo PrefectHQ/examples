@@ -91,6 +91,8 @@ You can convert example files to Markdown / MDX documentation:
 ```bash
 # Generate documentation into a temporary directory for local testing
 python -m internal generate-docs -o temp/docs -e .mdx
+# or
+uv run generate-docs  # defaults to /docs
 ```
 
 The `temp/docs/` directory is ignored by Git (see `.gitignore`) so you can iterate on documentation locally without affecting the `docs/` folder that is built in CI.

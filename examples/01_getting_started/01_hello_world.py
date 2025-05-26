@@ -4,6 +4,7 @@
 # dependencies: ["prefect"]
 # cmd: ["python", "01_getting_started/01_hello_world.py"]
 # tags: [getting_started, basics]
+# draft: false
 # ---
 
 # # Hello, world!
