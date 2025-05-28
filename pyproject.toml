@@ -7,9 +7,11 @@ requires-python = ">=3.9"
 
 dependencies = [
     "beautifulsoup4>=4.13.4",
+    "dbt-duckdb>=1.9.3",
     "jupytext>=1.17.1",
     "pandas>=2.2.3",
-    "prefect>=3.0.0",
+    "prefect-dbt==0.7.0rc1",
+    "prefect[dbt]>=3.0.0",
     "pytest>=8.3.5",
     "requests>=2.32.3",
 ]
