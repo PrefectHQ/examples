@@ -6,8 +6,6 @@
 # tags: [getting_started, webscraping, tasks, retries]
 # draft: false
 # ---
-
-# # Simple web scraper
 #
 # This example shows how Prefect enhances regular Python code without getting in its way.
 # You'll write code exactly as you normally would, and Prefect's decorators add production-ready
@@ -45,7 +43,7 @@ from prefect import flow, task
 @task(retries=3, retry_delay_seconds=2)
 def fetch_html(url: str) -> str:
     """Download page HTML (with retries).
-    
+
     This is just a regular requests call - Prefect adds retry logic
     without changing how we write the code."""
     print(f"Fetching {url} …")
@@ -56,26 +54,26 @@ def fetch_html(url: str) -> str:
 @task
 def parse_article(html: str) -> str:
     """Extract article text, skipping code blocks.
-    
+
     Regular BeautifulSoup parsing with standard Python string operations.
     Prefect adds observability without changing the logic."""
     soup = BeautifulSoup(html, "html.parser")
-    
+
     # Find main content - just regular BeautifulSoup
     article = soup.find("article") or soup.find("main")
     if not article:
         return ""
-        
+
     # Standard Python all the way
     for code in article.find_all(["pre", "code"]):
         code.decompose()
-    
+
     content = []
     for elem in article.find_all(["h1", "h2", "h3", "p", "ul", "ol", "li"]):
         text = elem.get_text().strip()
         if not text:
             continue
-            
+
         if elem.name.startswith('h'):
             content.extend([
                 "\n" + "=" * 80,
@@ -84,7 +82,7 @@ def parse_article(html: str) -> str:
             ])
         else:
             content.extend([text, ""])
-            
+
     return "\n".join(content)
 
 # ## Defining a flow
@@ -96,10 +94,10 @@ def parse_article(html: str) -> str:
 @flow(log_prints=True)
 def scrape(urls: List[str] | None = None) -> None:
     """Scrape and print article content from URLs.
-    
+
     A regular Python function that composes our tasks together.
     Prefect adds logging and dependency management automatically."""
-    
+
     if urls:
         for url in urls:
             content = parse_article(fetch_html(url))
