@@ -70,7 +70,26 @@ def render_example_md(example: Example) -> str:
     if _RE_FRONTMATTER.match(text):
         # Strip out frontmatter from text.
         if match := _RE_FRONTMATTER.search(text, 4):
-            text = text[match.end() + 1 :]
+            github_base_url = "https://github.com/prefecthq/examples/blob/examples-markdown/examples/"
+            github_url = f"{github_base_url}{example.repo_filename}"
+
+            # Using raw HTML for precise placement; most Markdown/MDX renderers will
+            # preserve the styling while allowing fallback to a plain link if HTML
+            # is stripped.
+            github_button = (
+                f'<a href="{github_url}" target="_blank">View on GitHub</a>\n\n'
+            )
+
+            frontmatter = "---\n"
+
+            for line in text[:match.end()].split("\n"):
+                if line.startswith(("title:", "description:")):
+                    frontmatter += line + "\n"
+
+            frontmatter += "---\n\n"
+
+            # Insert the button at the very top of the document.
+            text = frontmatter + github_button + text[match.end() + 1 :]
 
     if match := _RE_CODEBLOCK.match(text):
         filename = Path(example.filename).name
@@ -80,26 +99,6 @@ def render_example_md(example: Example) -> str:
 
 This is the source code for **{example.module}**.
 {text}"""
-
-    # ---------------------------------------------------------------------
-    # Prepend a "View on GitHub" button linking to the source file ---------
-    # ---------------------------------------------------------------------
-
-    github_base_url = "https://github.com/prefecthq/examples/blob/examples-markdown/examples/"
-    github_url = f"{github_base_url}{example.repo_filename}"
-
-    # Using raw HTML for precise placement; most Markdown/MDX renderers will
-    # preserve the styling while allowing fallback to a plain link if HTML
-    # is stripped.
-    github_button = (
-        f'<a href="{github_url}" target="_blank" '
-        f'style="float: right; padding: 6px 12px; background-color: #24292e; '
-        f'color: #ffffff; border-radius: 4px; text-decoration: none; '
-        f'font-size: 0.875rem; font-weight: 500;">View on GitHub</a>\n\n'
-    )
-
-    # Insert the button at the very top of the document.
-    text = github_button + text
 
     return text
 
@@ -181,7 +180,7 @@ def get_examples() -> Iterator[Example]:
         yield from gather_example_files(
             parents=[], subdir=subdir, ignored=ignored, recurse=True
         )
-    
+
     # Process PACC directory
     pacc_dir = EXAMPLES_ROOT / "pacc"
     if pacc_dir.exists():
@@ -197,7 +196,7 @@ def get_examples() -> Iterator[Example]:
             yield from gather_example_files(
                 parents=[], subdir=subdir, ignored=ignored, recurse=True
             )
-        
+
         # Handle Python files directly in PACC directory
         for file in sorted(
             p
@@ -207,22 +206,22 @@ def get_examples() -> Iterator[Example]:
             filename_abs = str(file.resolve())
             repo_filename = f"pacc/{file.name}"
             module = f"pacc.{file.stem}"
-            
+
             config = jupytext.config.JupytextConfiguration(
                 root_level_metadata_as_raw_cell=False
             )
-            
+
             try:
                 data = jupytext.read(open(filename_abs, encoding="utf-8"), config=config)
                 metadata = data["metadata"]["jupytext"].get("root_level_metadata", {})
             except Exception:
                 metadata = {}
-                
+
             cmd = metadata.get("cmd", ["prefect", "run", repo_filename])
             args = metadata.get("args", [])
             tags = metadata.get("tags", [])
             env = metadata.get("env", dict())
-            
+
             yield Example(
                 type=ExampleType.MODULE,
                 filename=filename_abs,

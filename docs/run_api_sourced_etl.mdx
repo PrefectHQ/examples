@@ -1,7 +1,10 @@
-<a href="https://github.com/prefecthq/examples/blob/examples-markdown/examples/01_getting_started/03_run_api_sourced_etl.py" target="_blank" style="float: right; padding: 6px 12px; background-color: #24292e; color: #ffffff; border-radius: 4px; text-decoration: none; font-size: 0.875rem; font-weight: 500;">View on GitHub</a>
+---
+title: API-sourced ETL – Prefect + pandas
+description: Build a small ETL pipeline that fetches JSON from a public API, transforms it with pandas, and writes a CSV – all orchestrated by Prefect.
+---
 
+<a href="https://github.com/prefecthq/examples/blob/examples-markdown/examples/01_getting_started/03_run_api_sourced_etl.py" target="_blank">View on GitHub</a>
 
-# API-sourced ETL – Prefect + pandas
 
 Prefect turns everyday Python into production-grade workflows with **zero boilerplate**.
 
@@ -25,7 +28,7 @@ This example demonstrates these Prefect features:
 
 ### Rapid analytics from a public API
 Your data team wants engagement metrics from Dev.to articles, daily. You need a quick,
-reliable pipeline that anyone can run locally and later schedule in Prefect Cloud. 
+reliable pipeline that anyone can run locally and later schedule in Prefect Cloud.
 
 ### The Solution
 Write three small Python functions (extract, transform, load), add two decorators, and
@@ -153,7 +156,7 @@ if __name__ == "__main__":
     pages = 3  # Number of pages to fetch
     per_page = 30  # Articles per page (max 30 per API docs)
     output_file = Path("devto_articles.csv")
-    
+
     etl(api_base=api_base, pages=pages, per_page=per_page, output_file=output_file)
 
 ```

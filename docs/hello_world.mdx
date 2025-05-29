@@ -1,7 +1,10 @@
-<a href="https://github.com/prefecthq/examples/blob/examples-markdown/examples/01_getting_started/01_hello_world.py" target="_blank" style="float: right; padding: 6px 12px; background-color: #24292e; color: #ffffff; border-radius: 4px; text-decoration: none; font-size: 0.875rem; font-weight: 500;">View on GitHub</a>
+---
+title: Hello, world!
+description: Your first steps with Prefect – learn how to create a basic flow and understand core concepts.
+---
 
+<a href="https://github.com/prefecthq/examples/blob/examples-markdown/examples/01_getting_started/01_hello_world.py" target="_blank">View on GitHub</a>
 
-# Hello, world!
 
 Welcome to your first Prefect flow. In under a minute you will:
 1. Ship production-ready orchestration code with **zero boilerplate**.
@@ -48,13 +51,13 @@ if __name__ == "__main__":
     # run the flow with default parameters
     with tags("test"): # This is a tag that we can use to filter the flow runs in the UI
         hello()  # Logs: "Hello, Marvin!"
-    
+
         # run the flow with a different input
         hello("Marvin")  # Logs: "Hello, Marvin!"
-    
+
         # run the flow multiple times for different people
         crew = ["Zaphod", "Trillian", "Ford"]
-    
+
         for name in crew:
             hello(name)
 

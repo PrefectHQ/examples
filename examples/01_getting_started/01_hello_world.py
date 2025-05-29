@@ -6,8 +6,6 @@
 # tags: [getting_started, basics]
 # draft: false
 # ---
-
-# # Hello, world!
 #
 # Welcome to your first Prefect flow. In under a minute you will:
 # 1. Ship production-ready orchestration code with **zero boilerplate**.
@@ -25,9 +23,9 @@ from prefect import flow, tags
 # ## Defining a flow
 
 # Prefect takes your Python functions and transforms them into flows with enhanced capabilities.
-# 
+#
 # Let's write a simple function that takes a name parameter and prints a greeting.
-# 
+#
 # To make this function work with Prefect, we just wrap it in the `@flow` decorator.
 
 @flow(log_prints=True)
@@ -38,7 +36,7 @@ def hello(name: str = "Marvin") -> None:
 # ## Running our flow locally and with parameters
 
 # Now let's see different ways we can call that flow:
-# 
+#
 # 1. As a regular call with default parameters
 # 2. With custom parameters
 # 3. Multiple times to greet different people
@@ -47,25 +45,25 @@ if __name__ == "__main__":
     # run the flow with default parameters
     with tags("test"): # This is a tag that we can use to filter the flow runs in the UI
         hello()  # Logs: "Hello, Marvin!"
-    
+
         # run the flow with a different input
         hello("Marvin")  # Logs: "Hello, Marvin!"
-    
+
         # run the flow multiple times for different people
         crew = ["Zaphod", "Trillian", "Ford"]
-    
+
         for name in crew:
             hello(name)
 
 # ## What just happened?
 
 # When we decorated our function with `@flow`, the function was transformed into a Prefect flow. Each time we called it:
-# 
+#
 # 1. Prefect registered the execution as a flow run
 # 2. It tracked all inputs, outputs, and logs
 # 3. It maintained detailed state information about the execution
 # 4. Added tags to the flow run to make it easier to find when observing the flow runs in the UI
-# 
+#
 # In short, we took a regular function and enhanced it with observability and tracking capabilities.
 
 # ## But why does this matter?
@@ -85,11 +83,11 @@ if __name__ == "__main__":
 # ### You can run a more complex flow
 
 # The `hello` function is a simple example, but in its place imagine something that matters to you, like:
-# 
+#
 # * ETL processes that extract, transform, and load data
 # * Machine learning training and inference pipelines
 # * API integrations and data synchronization jobs
-# 
+#
 # Prefect lets you orchestrate these operations effortlessly with automatic observability, error handling, and retries.
 
 # ### Key Takeaways
@@ -104,5 +102,5 @@ if __name__ == "__main__":
 
 # The `@flow` decorator is your gateway to enterprise-grade orchestration - no complex configuration needed!
 #
-# 
+#
 # For more information about the orchestration concepts demonstrated in this example, see the [Prefect documentation](https://docs.prefect.io/).

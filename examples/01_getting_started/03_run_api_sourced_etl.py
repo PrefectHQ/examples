@@ -6,17 +6,15 @@
 # tags: [getting_started, etl, pandas]
 # draft: false
 # ---
-
-# # API-sourced ETL – Prefect + pandas
 #
 # Prefect turns everyday Python into production-grade workflows with **zero boilerplate**.
-# 
+#
 # When you pair Prefect with pandas you get a **versatile ETL toolkit**:
-# 
+#
 # * **Python** supplies a rich ecosystem of connectors and libraries for virtually every data source and destination.
 # * **pandas** gives you lightning-fast, expressive transforms that turn raw bits into tidy DataFrames.
 # * **Prefect** wraps the whole thing in battle-tested orchestration: automatic [retries](https://docs.prefect.io/v3/develop/write-tasks#retries), [scheduling](https://docs.prefect.io/v3/deploy/index#workflow-scheduling-and-parametrization), and [observability](https://docs.prefect.io/v3/develop/logging#prefect-loggers) , so you don't have to write reams of defensive code.
-# 
+#
 # The result? You spend your time thinking about *what* you want to build, not *how* to keep it alive. Point this trio at any API, database, or file system and it will move the data where you need it while handling the messy details for you.
 #
 # In this article you will:
@@ -31,7 +29,7 @@
 #
 # ### Rapid analytics from a public API
 # Your data team wants engagement metrics from Dev.to articles, daily. You need a quick,
-# reliable pipeline that anyone can run locally and later schedule in Prefect Cloud. 
+# reliable pipeline that anyone can run locally and later schedule in Prefect Cloud.
 #
 # ### The Solution
 # Write three small Python functions (extract, transform, load), add two decorators, and
@@ -144,7 +142,7 @@ if __name__ == "__main__":
     pages = 3  # Number of pages to fetch
     per_page = 30  # Articles per page (max 30 per API docs)
     output_file = Path("devto_articles.csv")
-    
+
     etl(api_base=api_base, pages=pages, per_page=per_page, output_file=output_file)
 
 # ## What just happened?

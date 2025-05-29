@@ -6,8 +6,6 @@
 # tags: [dbt, materialization, tasks, analytics]
 # draft: false
 # ---
-
-# # dbt Model Orchestration – Prefect + dbt
 #
 # **Transform unreliable dbt scripts into production-grade data pipelines with enterprise observability, automatic failure recovery, and zero-downtime deployments.**
 #
@@ -30,7 +28,7 @@
 # ### The Scenario: Reliable Analytics Workflows
 # Your analytics team uses dbt to model data in DuckDB for rapid local development and testing, but deploys to Snowflake in production. You need a workflow that:
 # - Anyone can run locally without complex setup (DuckDB)
-# - Automatically retries on network failures or temporary dbt errors  
+# - Automatically retries on network failures or temporary dbt errors
 # - Provides clear logs and observability for debugging
 # - Can be easily scheduled and deployed to production
 #
@@ -78,8 +76,8 @@ def build_dbt_project(repo_zip_url: str = DEFAULT_REPO_ZIP) -> Path:
 
     To keep the example fully self-contained we grab the GitHub archive as a ZIP
     so users do **not** need `git` installed. The project is extracted from the
-    PrefectHQ/examples repository into a sibling directory next to this script 
-    (`prefect_dbt_project`). If that directory already exists we skip the download 
+    PrefectHQ/examples repository into a sibling directory next to this script
+    (`prefect_dbt_project`). If that directory already exists we skip the download
     to speed up subsequent runs.
     """
 
@@ -120,12 +118,12 @@ def build_dbt_project(repo_zip_url: str = DEFAULT_REPO_ZIP) -> Path:
 @task(retries=2, retry_delay_seconds=5, log_prints=True)
 def create_dbt_profiles(project_dir: Path) -> None:
     """Create a profiles.yml file for DuckDB connection.
-    
+
     This creates a simple DuckDB profile so dbt can run without external
     database configuration. The profile points to a local DuckDB file.
     This will overwrite any existing profiles.yml to ensure correct formatting.
     """
-    
+
     profiles_content = f"""demo:
   outputs:
     dev:
@@ -133,11 +131,11 @@ def create_dbt_profiles(project_dir: Path) -> None:
       path: {project_dir}/demo.duckdb
       threads: 1
   target: dev"""
-    
+
     profiles_path = project_dir / "profiles.yml"
     with open(profiles_path, "w") as f:
         f.write(profiles_content)
-    
+
     print(f"Created/updated profiles.yml at {profiles_path}")
 
 # ---------------------------------------------------------------------------
@@ -157,15 +155,15 @@ def run_dbt_commands(commands: list[str], project_dir: Path) -> None:
     This is much more robust than subprocess calls and integrates natively
     with Prefect's observability features.
     """
-    
+
     print(f"Running dbt commands: {commands}\n")
-    
+
     # Configure dbt settings to point to our project directory
     settings = PrefectDbtSettings(
         project_dir=str(project_dir),
         profiles_dir=str(project_dir)  # Use project dir for profiles too
     )
-    
+
     # Create runner and execute commands
     # Use raise_on_failure=False to handle dbt failures more gracefully
     runner = PrefectDbtRunner(settings=settings, raise_on_failure=False)
@@ -195,7 +193,7 @@ def dbt_flow(repo_zip_url: str = DEFAULT_REPO_ZIP) -> None:
     4. `dbt seed`   – load seed CSVs if they exist (safe to run even when empty).
     5. `dbt run`    – build the model(s) defined under `models/`.
     6. `dbt test`   – execute any tests declared in the project.
-    
+
     Each step runs as a separate Prefect task with automatic retries and logging.
     Uses the modern prefect-dbt integration for enhanced observability and
     native dbt execution.
@@ -242,7 +240,7 @@ def dbt_flow(repo_zip_url: str = DEFAULT_REPO_ZIP) -> None:
 #
 # To learn more about orchestrating analytics workflows with Prefect, check out:
 # - [prefect-dbt integration guide](https://docs.prefect.io/integrations/prefect-dbt)
-# - [Task configuration and retries](https://docs.prefect.io/v3/develop/write-tasks#retries) 
+# - [Task configuration and retries](https://docs.prefect.io/v3/develop/write-tasks#retries)
 # - [Workflow scheduling and deployment](https://docs.prefect.io/v3/deploy/index#workflow-scheduling-and-parametrization)
 
 if __name__ == "__main__":
