@@ -7,11 +7,11 @@ def setup_prefect_env():
     """Set up Prefect environment variables for testing."""
     # Use ephemeral storage for tests
     os.environ.setdefault("PREFECT_HOME", ".prefect")
-    
+
     # Avoid sending telemetry during tests
     os.environ.setdefault("PREFECT_DISABLE_TELEMETRY", "1")
-    
-    yield 
+
+    yield
 
 
 # ---------------------------------------------------------------------------
@@ -38,4 +38,4 @@ def files() -> list[str]:
             if filename.endswith(".py") and not filename.startswith("__"):
                 example_files.append(os.path.join(root, filename))
 
-    return example_files 
+    return example_files

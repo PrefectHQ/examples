@@ -7,19 +7,19 @@
 # ---
 
 # ## Thread-based Concurrency with Task Runners
-# 
+#
 # Prefect task runners provide a powerful way to
 # execute tasks concurrently without writing async code. This example explores
 # **task runners with mapping**.
-# 
+#
 # Prefect offers several task runners for different concurrency needs:
-# 
+#
 # * **ThreadPoolTaskRunner** - Runs tasks in parallel using a pool of threads
 # * **DaskTaskRunner** - Distributes tasks across a Dask cluster
 # * **RayTaskRunner** - Runs tasks on a Ray cluster
-# 
+#
 # ### Benefits of TaskRunner-based concurrency
-# 
+#
 # Task runners offer many advantages
 # over other concurrency approaches:
 #
@@ -27,27 +27,27 @@
 # * **Compatibility**: Works with any Python libraries, even those that aren't async-ready
 # * **Scalability**: Can scale up to multiple cores or even multiple machines
 # * **Familiar model**: Uses a thread pool approach common in many programming environments
-# 
+#
 # For an in-depth guide, see Prefect's task-runner documentation:
 # <https://docs.prefect.io/v3/develop/task-runners#run-tasks-concurrently-or-in-parallel>
-# 
+#
 # ### When should you use task runners?
 # * **CPU-bound or mixed workloads** – Parallelize CPU tasks or synchronous I/O with minimal changes
 # * **Non-async libraries** – Gain concurrency when your dependencies don't support async/await
 # * **Incremental scaling** – Local threads today, switch to Dask or Ray tomorrow with one parameter change
 # * **Task mapping fan-out** – Run thousands of small tasks concurrently while tracking each in the UI
-# 
+#
 # ### Task Mapping: The Secret Weapon
-# 
+#
 # A key feature of this approach is [**task mapping**](https://docs.prefect.io/v3/develop/task-runners#mapping-over-iterables).
 # With `.map()`, you can:
 #
 # 1. Apply a task to each item in a collection concurrently
 # 2. Control concurrency via the task runner settings
 # 3. Track all executions individually in the Prefect UI
-# 
+#
 # ### Running the example
-# 
+#
 # ```bash
 # python 02_sdk_concepts/05_task_runner_concurrency.py
 # ```
@@ -70,13 +70,14 @@ CONCURRENCY = 10
 # not within the tasks themselves.
 # Note the absence of any async/await keywords!
 
+
 @task(
     retries=3,
     retry_delay_seconds=[10, 30, 60],
 )
 def fetch_url(url: str, params: dict | None = None) -> dict[str, Any]:
     """Fetch JSON data from a URL.
-    
+
     This task will automatically retry up to 3 times with increasing delays
     if the request fails. Learn more about [retries in Prefect](https://docs.prefect.io/v3/guides/debugging/#retry-failed-tasks).
     """
@@ -89,13 +90,13 @@ def fetch_url(url: str, params: dict | None = None) -> dict[str, Any]:
 @task
 def list_articles(pages: int, per_page: int = 10) -> list[str]:
     """Fetch multiple pages of articles and return a list of article URLs.
-    
+
     This task demonstrates **task mapping** - one of Prefect's most powerful features:
-    
+
     1. We call fetch_url.map() to fetch multiple pages in parallel
     2. Each page call runs as an independent task in the thread pool
     3. `.result()` waits for all mapped tasks to complete
-    
+
     See [task mapping documentation](https://docs.prefect.io/v3/develop/task-map/) for more examples.
     """
 
@@ -118,10 +119,11 @@ def list_articles(pages: int, per_page: int = 10) -> list[str]:
 # 3. We use `.map()` to run `fetch_url` for each article URL concurrently
 # 4. We process results as they complete with `as_completed()`
 
+
 @flow(task_runner=ThreadPoolTaskRunner(max_workers=CONCURRENCY))
 def extract(pages: int) -> None:
     """Extract article data from the Dev.to API using thread-based concurrency.
-    
+
     This flow demonstrates:
     1. Using a ThreadPoolTaskRunner for parallel execution
     2. Task mapping for concise parallel data processing

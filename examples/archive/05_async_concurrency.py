@@ -7,46 +7,46 @@
 # ---
 
 # ## Scaling Up: Concurrent Execution in Prefect
-# 
-# Data engineering often requires processing many items simultaneously for efficiency. 
+#
+# Data engineering often requires processing many items simultaneously for efficiency.
 # Prefect offers multiple approaches to concurrency:
-# 
+#
 # 1. **Native Python async/await** - Leverage Python's built-in asynchronous capabilities
 # 2. **Task runners** - Use Prefect's `ThreadPoolTaskRunner` or `DaskTaskRunner`
-# 
-# In this example, we'll focus on the async/await approach, which excels at I/O-bound 
+#
+# In this example, we'll focus on the async/await approach, which excels at I/O-bound
 # operations like API calls, database queries, and network requests.
-# 
+#
 # ### Benefits of async concurrency
-# 
+#
 # * **Performance**: Process multiple items concurrently without full threads
 # * **Control**: Fine-grained control over concurrency limits
 # * **Integration**: Works with async libraries like `httpx`, `asyncpg`, etc.
 # * **Scalability**: Handle thousands of concurrent operations efficiently
-# 
+#
 # For more details on async and concurrency in Prefect, see the official documentation:
 # <https://docs.prefect.io/v3/develop/write-tasks#asynchronous-functions>
-# 
+#
 # ### When should you use async concurrency?
 # * **I/O-bound operations** – Fetch many API endpoints or perform network requests in parallel
 # * **High-latency tasks** – Await slow cloud services or external databases while keeping workers free
 # * **Rate-limited APIs** – Control concurrent requests with semaphores to stay within provider limits
 # * **Large fan-out workloads** – Crawl or scrape thousands of URLs concurrently without spawning threads
-# 
+#
 # ### The task at hand
-# 
+#
 # We'll build a flow that extracts articles from the Dev.to API concurrently:
-# 
+#
 # 1. First, we'll fetch multiple pages of article listings in parallel
 # 2. Then, we'll fetch the full details of each article in parallel
 # 3. All while controlling our concurrency to avoid overwhelming the API
-# 
+#
 # ### Running the example
-# 
+#
 # ```bash
 # python 02_sdk_concepts/04_async_concurrency.py
 # ```
-# 
+#
 # Note: This example requires Python 3.7+ and the `httpx` library.
 
 import asyncio
@@ -62,10 +62,11 @@ CONCURRENCY = 10
 # ## Implementing concurrent tasks
 #
 # First, we define a reusable task for fetching data from any URL. Note:
-# 
+#
 # * The `async` keyword makes this task asynchronous
 # * We use a semaphore to limit concurrent requests
 # * This task handles retries with exponential backoff
+
 
 @task(retries=3, retry_delay_seconds=[10, 30, 60], cache_policy=NO_CACHE)
 async def fetch_url(
@@ -84,10 +85,11 @@ async def fetch_url(
 
 # Now we create a task that fetches multiple pages of article listings.
 # It does this by:
-# 
+#
 # 1. Creating a list of fetch tasks (one per page)
 # 2. Using `asyncio.gather()` to run them all concurrently
 # 3. Extracting article IDs from the results
+
 
 @task(cache_policy=NO_CACHE)
 async def list_articles(
@@ -123,6 +125,7 @@ async def list_articles(
 # Notice how we're managing two levels of concurrency: page fetching and
 # article fetching.
 
+
 @flow
 async def extract(pages: int) -> None:
     """Extract articles from the Dev.to API"""
@@ -145,7 +148,7 @@ async def extract(pages: int) -> None:
 #
 # ```python
 # from prefect.task_runners import ThreadPoolTaskRunner
-# 
+#
 # @flow(task_runner=ThreadPoolTaskRunner(max_workers=10))
 # def extract_with_threads(pages: int) -> None:
 #     # Regular synchronous code here

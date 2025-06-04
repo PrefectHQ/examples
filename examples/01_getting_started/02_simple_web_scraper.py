@@ -30,7 +30,6 @@
 
 from __future__ import annotations
 
-import re
 from typing import List
 
 import requests
@@ -40,6 +39,7 @@ from prefect import flow, task
 # ## Defining tasks
 #
 # We separate network IO from parsing so both pieces can be retried or cached independently.
+
 
 @task(retries=3, retry_delay_seconds=2)
 def fetch_html(url: str) -> str:
@@ -51,6 +51,7 @@ def fetch_html(url: str) -> str:
     response = requests.get(url, timeout=10)
     response.raise_for_status()
     return response.text
+
 
 @task
 def parse_article(html: str) -> str:
@@ -75,22 +76,20 @@ def parse_article(html: str) -> str:
         if not text:
             continue
 
-        if elem.name.startswith('h'):
-            content.extend([
-                "\n" + "=" * 80,
-                text.upper(),
-                "=" * 80 + "\n"
-            ])
+        if elem.name.startswith("h"):
+            content.extend(["\n" + "=" * 80, text.upper(), "=" * 80 + "\n"])
         else:
             content.extend([text, ""])
 
     return "\n".join(content)
+
 
 # ## Defining a flow
 #
 # `@flow` elevates a function to a *flow* – the orchestration nucleus that can call
 # tasks, other flows, and any Python you need. We enable `log_prints=True` so each
 # `print()` surfaces in Prefect Cloud or the local API.
+
 
 @flow(log_prints=True)
 def scrape(urls: List[str] | None = None) -> None:
@@ -103,6 +102,7 @@ def scrape(urls: List[str] | None = None) -> None:
         for url in urls:
             content = parse_article(fetch_html(url))
             print(content if content else "No article content found.")
+
 
 # ## Run it!
 #

@@ -70,7 +70,9 @@ def render_example_md(example: Example) -> str:
     if _RE_FRONTMATTER.match(text):
         # Strip out frontmatter from text.
         if match := _RE_FRONTMATTER.search(text, 4):
-            github_base_url = "https://github.com/prefecthq/examples/blob/examples-markdown/examples/"
+            github_base_url = (
+                "https://github.com/prefecthq/examples/blob/examples-markdown/examples/"
+            )
             github_url = f"{github_base_url}{example.repo_filename}"
 
             # Using raw HTML for precise placement; most Markdown/MDX renderers will
@@ -82,7 +84,7 @@ def render_example_md(example: Example) -> str:
 
             frontmatter = "---\n"
 
-            for line in text[:match.end()].split("\n"):
+            for line in text[: match.end()].split("\n"):
                 if line.startswith(("title:", "description:", "icon:")):
                     frontmatter += line + "\n"
 
@@ -132,7 +134,9 @@ def gather_example_files(
                     module = f"examples.{parent_mods}.{subdir.stem}.{filename.stem}"
                 else:
                     module = f"examples.{subdir.stem}.{filename.stem}"
-                data = jupytext.read(open(filename_abs, encoding="utf-8"), config=config)
+                data = jupytext.read(
+                    open(filename_abs, encoding="utf-8"), config=config
+                )
                 metadata = data["metadata"]["jupytext"].get("root_level_metadata", {})
                 cmd = metadata.get("cmd", ["prefect", "run", repo_filename])
                 args = metadata.get("args", [])
@@ -212,7 +216,9 @@ def get_examples() -> Iterator[Example]:
             )
 
             try:
-                data = jupytext.read(open(filename_abs, encoding="utf-8"), config=config)
+                data = jupytext.read(
+                    open(filename_abs, encoding="utf-8"), config=config
+                )
                 metadata = data["metadata"]["jupytext"].get("root_level_metadata", {})
             except Exception:
                 metadata = {}

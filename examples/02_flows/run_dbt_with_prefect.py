@@ -71,6 +71,7 @@ DEFAULT_REPO_ZIP = (
 # directly from GitHub as a ZIP file. This means users don't need git installed.
 # [Learn more about tasks in the Prefect documentation](https://docs.prefect.io/v3/develop/write-tasks)
 
+
 @task(retries=2, retry_delay_seconds=5, log_prints=True)
 def build_dbt_project(repo_zip_url: str = DEFAULT_REPO_ZIP) -> Path:
     """Download and extract the demo dbt project, returning its local path.
@@ -99,9 +100,13 @@ def build_dbt_project(repo_zip_url: str = DEFAULT_REPO_ZIP) -> Path:
         zf.extractall(tmp_extract_base)
 
     # Find the folder containing dbt_project.yml (in resources/prefect_dbt_project)
-    candidates = list(tmp_extract_base.rglob("**/resources/prefect_dbt_project/dbt_project.yml"))
+    candidates = list(
+        tmp_extract_base.rglob("**/resources/prefect_dbt_project/dbt_project.yml")
+    )
     if not candidates:
-        raise ValueError("dbt_project.yml not found in resources/prefect_dbt_project – structure unexpected")
+        raise ValueError(
+            "dbt_project.yml not found in resources/prefect_dbt_project – structure unexpected"
+        )
 
     project_root = candidates[0].parent
     shutil.move(str(project_root), str(project_dir))
@@ -110,11 +115,13 @@ def build_dbt_project(repo_zip_url: str = DEFAULT_REPO_ZIP) -> Path:
     print(f"Extracted dbt project to {project_dir}\n")
     return project_dir
 
+
 # ---------------------------------------------------------------------------
 # Create profiles.yml for DuckDB – needed for dbt to work
 # ---------------------------------------------------------------------------
 # This task creates a simple profiles.yml file for DuckDB so dbt can connect
 # to the database. This keeps the example self-contained.
+
 
 @task(retries=2, retry_delay_seconds=5, log_prints=True)
 def create_dbt_profiles(project_dir: Path) -> None:
@@ -139,6 +146,7 @@ def create_dbt_profiles(project_dir: Path) -> None:
 
     print(f"Created/updated profiles.yml at {profiles_path}")
 
+
 # ---------------------------------------------------------------------------
 # dbt CLI Wrapper – execute commands with retries and logging using prefect-dbt
 # ---------------------------------------------------------------------------
@@ -146,6 +154,7 @@ def create_dbt_profiles(project_dir: Path) -> None:
 # provides native dbt execution with enhanced logging, failure handling, and
 # automatic event emission.
 # [Learn more about retries in the Prefect documentation](https://docs.prefect.io/v3/develop/write-tasks#retries)
+
 
 @task(retries=2, retry_delay_seconds=5, log_prints=True)
 def run_dbt_commands(commands: list[str], project_dir: Path) -> None:
@@ -162,7 +171,7 @@ def run_dbt_commands(commands: list[str], project_dir: Path) -> None:
     # Configure dbt settings to point to our project directory
     settings = PrefectDbtSettings(
         project_dir=str(project_dir),
-        profiles_dir=str(project_dir)  # Use project dir for profiles too
+        profiles_dir=str(project_dir),  # Use project dir for profiles too
     )
 
     # Create runner and execute commands
@@ -174,6 +183,7 @@ def run_dbt_commands(commands: list[str], project_dir: Path) -> None:
         runner.invoke(command.split())
         print(f"Completed: dbt {command}\n")
 
+
 # ---------------------------------------------------------------------------
 # Orchestration Flow – run the complete dbt lifecycle
 # ---------------------------------------------------------------------------
@@ -182,6 +192,7 @@ def run_dbt_commands(commands: list[str], project_dir: Path) -> None:
 # and automatic retry handling for any step that fails. Now using the flexible
 # prefect-dbt integration for enhanced dbt execution.
 # [Learn more about flows in the Prefect documentation](https://docs.prefect.io/v3/develop/write-flows)
+
 
 @flow(name="dbt_flow", log_prints=True)
 def dbt_flow(repo_zip_url: str = DEFAULT_REPO_ZIP) -> None:
@@ -212,6 +223,7 @@ def dbt_flow(repo_zip_url: str = DEFAULT_REPO_ZIP) -> None:
     # Let users know where the DuckDB file was written for exploration
     duckdb_path = project_dir / "demo.duckdb"
     print(f"\nDone! DuckDB file located at: {duckdb_path.resolve()}")
+
 
 # ### What Just Happened?
 #

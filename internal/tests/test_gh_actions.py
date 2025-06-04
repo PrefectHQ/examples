@@ -99,4 +99,4 @@ def test_changed_example(example_path: str):
     if example_path in _xfail_examples:
         pytest.xfail("Example is expected to exit non-zero (demonstrates retries)")
 
-    assert passed, f"Example {example_path} failed" 
+    assert passed, f"Example {example_path} failed"
