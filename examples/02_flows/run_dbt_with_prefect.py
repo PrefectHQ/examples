@@ -1,6 +1,7 @@
 # ---
 # title: dbt Model Orchestration – Prefect + dbt
 # description: Orchestrate any dbt project with bullet-proof retries, observability, and a single Python file – no YAML or shell scripts required.
+# icon: database
 # dependencies: ["prefect", "prefect-dbt>=0.7.0rc1", "dbt-core", "dbt-duckdb"]
 # cmd: ["python", "02_flows/run_dbt_with_prefect.py"]
 # tags: [dbt, materialization, tasks, analytics]

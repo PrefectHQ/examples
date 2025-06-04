@@ -16,26 +16,36 @@ def generate_cards(files: list[str]) -> str:
             text = f.read()
 
         pattern = r"title:\s*(.+)\ndescription:\s*(.+)"
-        match = re.search(pattern, text)
+        header_info = re.search(pattern, text)
 
-        if not match:
+        if not header_info:
             raise ValueError(f"File {file} does not have a title or description")
 
-        title = match.group(1)
-        description = match.group(2)
+        icon_pattern = r"icon:\s*(.+)"
+        icon = re.search(icon_pattern, text)
+
+        title = header_info.group(1)
+        description = header_info.group(2)
+
+        if icon:
+            icon = icon.group(1)
+        else:
+            icon = "play"
 
         body += f"""
-          <Card title="{title}" icon="play" href="/v3/examples/{path}">
+          <Card title="{title}" icon="{icon}" href="/v3/examples/{path}">
             {description}
           </Card>\n
           """
+
+        print(f"Processed file {file}...")
+
     body += """</CardGroup>\n"""
     return body
 
 
 def main():
     files = get_all_mdx_files()
-    print(files)
     card_table = generate_cards(files)
     with open("index.mdx", "w") as f:
         f.write("""---\ntitle: Examples\n---\n""")

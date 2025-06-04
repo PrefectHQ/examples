@@ -83,7 +83,7 @@ def render_example_md(example: Example) -> str:
             frontmatter = "---\n"
 
             for line in text[:match.end()].split("\n"):
-                if line.startswith(("title:", "description:")):
+                if line.startswith(("title:", "description:", "icon:")):
                     frontmatter += line + "\n"
 
             frontmatter += "---\n\n"

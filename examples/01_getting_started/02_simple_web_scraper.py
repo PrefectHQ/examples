@@ -1,6 +1,7 @@
 # ---
 # title: Simple web scraper
 # description: Learn how to scrape article content from web pages with Prefect tasks, retries, and automatic logging.
+# icon: globe
 # dependencies: ["prefect", "requests", "beautifulsoup4"]
 # cmd: ["python", "01_getting_started/02_simple_web_scraper.py"]
 # tags: [getting_started, webscraping, tasks, retries]
