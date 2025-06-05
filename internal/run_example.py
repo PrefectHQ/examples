@@ -17,7 +17,7 @@ def run_script(example):
 
     print(f"Running: {example.repo_filename}")
     print(f"CLI args: {example.cli_args}")
-    
+
     # Ensure path correctness for file-based commands
     cli_args = [str(x) for x in example.cli_args]
 
@@ -39,7 +39,7 @@ def run_script(example):
             timeout=TIMEOUT,
         )
         total_time = time.time() - t0
-        
+
         if process.returncode == 0:
             print(f"Success after {total_time:.2f}s ✅")
         else:
@@ -60,11 +60,11 @@ def run_script(example):
 def list_examples():
     """List all examples in the repository."""
     examples = list(get_examples())
-    
+
     if not examples:
         print("No examples found.")
         return
-    
+
     print(f"Found {len(examples)} examples:")
     for example in sorted(examples, key=lambda e: e.repo_filename):
         print(example.repo_filename)
@@ -73,39 +73,41 @@ def list_examples():
 def run_single_example(example_name_or_path):
     """Run a single example by name or path."""
     examples = list(get_examples())
-    
+
     # First try exact path match
     matching_examples = [e for e in examples if e.repo_filename == example_name_or_path]
-    
+
     # If no exact match, try stem match
     if not matching_examples:
         matching_examples = [e for e in examples if e.stem == example_name_or_path]
-    
+
     # If still no match, try partial path match
     if not matching_examples:
-        matching_examples = [e for e in examples if example_name_or_path in e.repo_filename]
-    
+        matching_examples = [
+            e for e in examples if example_name_or_path in e.repo_filename
+        ]
+
     if not matching_examples:
         print(f"No examples found matching '{example_name_or_path}'")
         return 1
-    
+
     if len(matching_examples) > 1:
         print(f"Multiple examples found matching '{example_name_or_path}':")
         for e in matching_examples:
             print(f"- {e.repo_filename}")
         return 1
-    
+
     return run_script(matching_examples[0])
 
 
 def run_random_example():
     """Run a random example from the repository."""
     examples = list(get_examples())
-    
+
     if not examples:
         print("No examples found.")
         return 1
-    
+
     example = random.choice(examples)
     return run_script(example)
 
@@ -114,6 +116,6 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python -m internal.run_example <example_name_or_path>")
         sys.exit(1)
-    
+
     example_name_or_path = sys.argv[1]
-    sys.exit(run_single_example(example_name_or_path)) 
+    sys.exit(run_single_example(example_name_or_path))

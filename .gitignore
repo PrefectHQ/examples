@@ -174,3 +174,4 @@ apps/background-tasks/task-storage/
 
 # Local documentation build output for testing
 temp/docs/
+docs/

@@ -29,7 +29,7 @@ def _git_diff_names(*args: str) -> list[str]:
             text=True,
             check=True,
         )
-        return [l.strip() for l in result.stdout.splitlines() if l.strip()]
+        return [line.strip() for line in result.stdout.splitlines() if line.strip()]
     except Exception:
         return []
 
@@ -99,4 +99,4 @@ def test_changed_example(example_path: str):
     if example_path in _xfail_examples:
         pytest.xfail("Example is expected to exit non-zero (demonstrates retries)")
 
-    assert passed, f"Example {example_path} failed" 
+    assert passed, f"Example {example_path} failed"

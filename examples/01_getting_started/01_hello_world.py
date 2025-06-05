@@ -1,6 +1,7 @@
 # ---
 # title: Hello, world!
 # description: Your first steps with Prefect – learn how to create a basic flow and understand core concepts.
+# icon: play
 # dependencies: ["prefect"]
 # cmd: ["python", "01_getting_started/01_hello_world.py"]
 # tags: [getting_started, basics]
@@ -28,10 +29,12 @@ from prefect import flow, tags
 #
 # To make this function work with Prefect, we just wrap it in the `@flow` decorator.
 
+
 @flow(log_prints=True)
 def hello(name: str = "Marvin") -> None:
     """Log a friendly greeting."""
     print(f"Hello, {name}!")
+
 
 # ## Running our flow locally and with parameters
 
@@ -43,7 +46,9 @@ def hello(name: str = "Marvin") -> None:
 
 if __name__ == "__main__":
     # run the flow with default parameters
-    with tags("test"): # This is a tag that we can use to filter the flow runs in the UI
+    with tags(
+        "test"
+    ):  # This is a tag that we can use to filter the flow runs in the UI
         hello()  # Logs: "Hello, Marvin!"
 
         # run the flow with a different input

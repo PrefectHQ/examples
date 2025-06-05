@@ -1,6 +1,7 @@
 # ---
 # title: API-sourced ETL – Prefect + pandas
 # description: Build a small ETL pipeline that fetches JSON from a public API, transforms it with pandas, and writes a CSV – all orchestrated by Prefect.
+# icon: database
 # dependencies: ["prefect", "httpx", "pandas"]
 # cmd: ["python", "01_getting_started/03_run_api_sourced_etl.py"]
 # tags: [getting_started, etl, pandas]
@@ -67,6 +68,7 @@ from prefect import flow, task
 # Extract – fetch a single page of articles
 # ---------------------------------------------------------------------------
 
+
 @task(retries=3, retry_delay_seconds=[2, 5, 15])
 def fetch_page(page: int, api_base: str, per_page: int) -> list[dict[str, Any]]:
     """Return a list of article dicts for a given page number."""
@@ -77,9 +79,11 @@ def fetch_page(page: int, api_base: str, per_page: int) -> list[dict[str, Any]]:
     response.raise_for_status()
     return response.json()
 
+
 # ---------------------------------------------------------------------------
 # Transform – convert list[dict] ➜ pandas DataFrame
 # ---------------------------------------------------------------------------
+
 
 @task
 def to_dataframe(raw_articles: list[list[dict[str, Any]]]) -> pd.DataFrame:
@@ -100,9 +104,11 @@ def to_dataframe(raw_articles: list[list[dict[str, Any]]]) -> pd.DataFrame:
     ]
     return df
 
+
 # ---------------------------------------------------------------------------
 # Load – save DataFrame to CSV (or print preview)
 # ---------------------------------------------------------------------------
+
 
 @task
 def save_csv(df: pd.DataFrame, path: Path) -> None:
@@ -110,9 +116,11 @@ def save_csv(df: pd.DataFrame, path: Path) -> None:
     df.to_csv(path, index=False)
     print(f"Saved {len(df)} rows ➜ {path}\n\nPreview:\n{df.head()}\n")
 
+
 # ---------------------------------------------------------------------------
 # Flow – orchestrate the ETL with optional concurrency
 # ---------------------------------------------------------------------------
+
 
 @flow(name="devto_etl", log_prints=True)
 def etl(api_base: str, pages: int, per_page: int, output_file: Path) -> None:

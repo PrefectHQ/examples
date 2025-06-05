@@ -32,6 +32,7 @@ from prefect import flow, task, get_run_logger
 # Tasks are the building blocks of a flow.  Each task executes a single piece of
 # logic and can be retried, cached, or run in parallel.
 
+
 @task(retries=2, retry_delay_seconds=5)
 def fetch_data(size: int) -> list[int]:
     """Simulate pulling records from an API or database."""
@@ -60,10 +61,11 @@ def load(data: list[int]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Component 2 – Compose a flow 
+# Component 2 – Compose a flow
 # ---------------------------------------------------------------------------
 # Flows orchestrate tasks. They can accept parameters, call tasks (or other
 # flows), and return results.
+
 
 @flow(log_prints=True)
 def tutorial_flow(
@@ -88,7 +90,7 @@ def tutorial_flow(
 
 
 # ---------------------------------------------------------------------------
-# What happens when you run this file? 
+# What happens when you run this file?
 # ---------------------------------------------------------------------------
 # 1. Prefect registers the tasks (`fetch_data`, `transform`, `load`).
 # 2. `tutorial_flow` is invoked within the `__main__` guard.
