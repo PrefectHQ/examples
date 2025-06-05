@@ -5,7 +5,33 @@ description = "Examples of how to use Prefect"
 readme = "README.md"
 requires-python = ">=3.9"
 
-dependencies = ["prefect>=3.0.0"]
+dependencies = [
+    "beautifulsoup4>=4.13.4",
+    "dbt-duckdb>=1.9.3",
+    "jupytext>=1.17.1",
+    "pandas>=2.2.3",
+    "prefect-dbt==0.7.0rc1",
+    "prefect[dbt]>=3.0.0",
+    "pytest>=8.3.5",
+    "requests>=2.32.3",
+]
+
+[dependency-groups]
+dev = ["ruff", "ty", "ipython", "pre-commit"]
 
 [project.urls]
 Code = "https://github.com/PrefectHQ/examples"
+
+[project.scripts]
+generate-docs = "internal.generate_docs:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["internal"]
+
+[tool.ruff.lint]
+extend-select = ["I", "UP"]
+exclude = ["internal/__init__.py"]

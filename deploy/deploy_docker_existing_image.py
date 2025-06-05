@@ -26,7 +26,7 @@ prefect worker start --pool docker --type docker
 ```
 """
 
-from prefect import flow, deploy
+from prefect import deploy, flow
 from prefect.runner.storage import LocalStorage
 
 # Location of the flow in your local filesystem

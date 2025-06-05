@@ -6,7 +6,6 @@ import dlt
 from dlt.sources.rest_api import rest_api_source
 from prefect.settings import PREFECT_API_KEY, PREFECT_API_URL
 
-
 source = rest_api_source(
     {
         "client": {

@@ -1,10 +1,9 @@
 from typing import Annotated, Any, cast
 
 from fastapi import Form
+from prefect.logging import get_logger
 from pydantic import BaseModel, Field, ImportString
 from pydantic_core import from_json
-
-from prefect.logging import get_logger
 
 logger = get_logger(__name__)
 

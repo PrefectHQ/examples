@@ -1,14 +1,14 @@
 import os
-from fastapi.staticfiles import StaticFiles
 from uuid import UUID
 
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
-from foo._internal import get_form_data, get_task_result, StructuredOutputRequest
-from foo.task import create_structured_output
 from prefect.logging import get_logger
+
+from foo._internal import StructuredOutputRequest, get_form_data, get_task_result
+from foo.task import create_structured_output
 
 app = FastAPI()
 
