@@ -1,9 +1,10 @@
 import json
 import re
 import warnings
+from collections.abc import Iterator
 from enum import Enum
 from pathlib import Path
-from typing import Iterator, Optional, Tuple
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -25,16 +26,14 @@ class ExampleType(int, Enum):
 class Example(BaseModel):
     type: ExampleType
     filename: str  # absolute filepath to example file
-    module: Optional[str] = (
-        None  # python import path, or none if file is not a py module.
-    )
+    module: str | None = None  # python import path, or none if file is not a py module.
     # TODO(erikbern): don't think the module is used (by docs or monitors)?
-    metadata: Optional[dict] = None
+    metadata: dict[str, Any] | None = None
     repo_filename: str  # git repo relative filepath
-    cli_args: Optional[list] = None  # Full command line args to run it
-    stem: Optional[str] = None  # stem of path
-    tags: Optional[list[str]] = None  # metadata tags for the example
-    env: Optional[dict[str, str]] = None  # environment variables for the example
+    cli_args: list[str] | None = None  # Full command line args to run it
+    stem: str | None = None  # stem of path
+    tags: list[str] | None = None  # metadata tags for the example
+    env: dict[str, str] | None = None  # environment variables for the example
 
 
 _RE_NEWLINE = re.compile(r"\r?\n")
@@ -251,7 +250,7 @@ def get_examples_json():
 # ---------------------------------------------------------------------------
 
 
-def parse_frontmatter(content: str) -> Tuple[Optional[dict], str]:
+def parse_frontmatter(content: str) -> tuple[dict[str, Any] | None, str]:
     """Extract YAML front-matter from a file and return (metadata, code).
 
     If no front-matter block (bounded by `---` lines) is found, returns

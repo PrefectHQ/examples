@@ -5,7 +5,8 @@ Main entry point for running the internal tools.
 
 import argparse
 import sys
-from .run_example import run_single_example, run_random_example, list_examples
+
+from .run_example import list_examples, run_random_example, run_single_example
 
 
 def main():

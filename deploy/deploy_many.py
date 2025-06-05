@@ -16,7 +16,7 @@ import asyncio
 from pathlib import Path
 
 import typer
-from prefect import flow, __version__
+from prefect import __version__, flow
 
 # NOTE: The import path changed in 3.1.11
 if tuple(map(int, __version__.split("."))) < (3, 1, 11):

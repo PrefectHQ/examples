@@ -16,6 +16,9 @@ dependencies = [
     "requests>=2.32.3",
 ]
 
+[dependency-groups]
+dev = ["ruff", "ty", "ipython", "pre-commit"]
+
 [project.urls]
 Code = "https://github.com/PrefectHQ/examples"
 
@@ -23,11 +26,12 @@ Code = "https://github.com/PrefectHQ/examples"
 generate-docs = "internal.generate_docs:main"
 
 [build-system]
-requires = ["setuptools>=64", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.ruff]
-extend-exclude = ["internal/__init__.py"]
-
-[tool.setuptools]
+[tool.hatch.build.targets.wheel]
 packages = ["internal"]
+
+[tool.ruff.lint]
+extend-select = ["I", "UP"]
+exclude = ["internal/__init__.py"]

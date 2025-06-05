@@ -15,9 +15,9 @@ prefect worker start --pool process --type process
 """
 
 from prefect import flow
-from prefect.runner.storage import GitRepository
 from prefect.blocks.system import Secret
 from prefect.client.schemas.schedules import CronSchedule
+from prefect.runner.storage import GitRepository
 
 
 def deploy():

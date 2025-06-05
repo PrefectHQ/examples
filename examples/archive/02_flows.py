@@ -24,7 +24,7 @@ from datetime import datetime
 from random import randint
 from time import sleep
 
-from prefect import flow, task, get_run_logger
+from prefect import flow, get_run_logger, task
 
 # ---------------------------------------------------------------------------
 # Component 1 – Define reusable tasks
