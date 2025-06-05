@@ -30,7 +30,6 @@ the decorators and the code would still work - Prefect just makes it more resili
 from __future__ import annotations
 
 import re
-from typing import List
 
 import requests
 from bs4 import BeautifulSoup
@@ -98,7 +97,7 @@ tasks, other flows, and any Python you need. We enable `log_prints=True` so each
 
 ```python
 @flow(log_prints=True)
-def scrape(urls: List[str] | None = None) -> None:
+def scrape(urls: list[str] | None = None) -> None:
     """Scrape and print article content from URLs.
 
     A regular Python function that composes our tasks together.

@@ -12,10 +12,10 @@ import re
 import subprocess
 import sys
 import tempfile
-from typing import List, Optional, Tuple
+from typing import Any
 
 
-def parse_frontmatter(content: str) -> Tuple[Optional[dict], str]:
+def parse_frontmatter(content: str) -> tuple[dict[str, Any] | None, str]:
     """Parse and remove frontmatter from file content."""
     # Simple function to remove frontmatter between --- markers
     frontmatter_pattern = re.compile(r"^---\s*$(.*?)^---\s*$", re.MULTILINE | re.DOTALL)
@@ -77,7 +77,7 @@ def run_example(file_path: str) -> bool:
         print("--------------------------------------")
 
 
-def test_examples(files: List[str]) -> Tuple[int, int]:
+def test_examples(files: list[str]) -> tuple[int, int]:
     """Test multiple example files and return counts of passed and failed tests."""
     if not files:
         print("No examples to test.")
@@ -96,9 +96,12 @@ def test_examples(files: List[str]) -> Tuple[int, int]:
 
 
 def find_example_files(
-    directory: str = "examples", extensions: List[str] = [".py"]
-) -> List[str]:
+    directory: str = "examples", extensions: list[str] | None = None
+) -> list[str]:
     """Find all example files in the given directory."""
+
+    extensions = extensions or [".py"]
+
     example_files = []
     for root, _, files in os.walk(directory):
         # Skip internal directories

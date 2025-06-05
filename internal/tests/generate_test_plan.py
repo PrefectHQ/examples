@@ -10,12 +10,11 @@ import argparse
 import json
 import os
 import sys
-from typing import List
 
 from ..utils import Example, get_examples
 
 
-def get_changed_files_from_env() -> List[str]:
+def get_changed_files_from_env() -> list[str]:
     """Get changed files from GitHub Actions environment variables."""
     if "GITHUB_EVENT_PATH" in os.environ:
         with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as f:
@@ -32,7 +31,7 @@ def get_changed_files_from_env() -> List[str]:
     return []
 
 
-def get_changed_files_from_git_diff(commit_range: str) -> List[str]:
+def get_changed_files_from_git_diff(commit_range: str) -> list[str]:
     """Get changed files from git diff in the given commit range."""
     import subprocess
 
@@ -46,7 +45,7 @@ def get_changed_files_from_git_diff(commit_range: str) -> List[str]:
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
 
-def get_examples_to_test(changed_files: List[str]) -> List[Example]:
+def get_examples_to_test(changed_files: list[str]) -> list[Example]:
     """Get examples to test based on changed files."""
     examples = get_examples()
 
@@ -74,7 +73,7 @@ def get_examples_to_test(changed_files: List[str]) -> List[Example]:
     return examples_to_test
 
 
-def output_test_plan(examples: List[Example], format: str = "text"):
+def output_test_plan(examples: list[Example], format: str = "text"):
     """Output the test plan in the specified format."""
     if not examples:
         print("No examples to test.")
