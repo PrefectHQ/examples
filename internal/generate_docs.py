@@ -10,6 +10,7 @@ import argparse
 from pathlib import Path
 import re
 from itertools import islice
+from slugify import slugify
 
 from .utils import get_examples, render_example_md
 
@@ -99,7 +100,8 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
         # Use the original file name (without numeric prefixes) as the mdx filename.
         original_base = Path(parts[-1]).stem
         # Remove leading numeric prefixes like "01_", "002_", etc.
-        cleaned_base = re.sub(r"^\d+_", "", original_base)
+        # and slugify to make more URL friendly
+        cleaned_base = slugify(re.sub(r"^\d+_", "", original_base))
 
         doc_filename = docs_dir / f"{cleaned_base}{extension}"
 

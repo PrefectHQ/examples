@@ -140,7 +140,7 @@ def repo_info(repo_owner: str = "PrefectHQ", repo_name: str = "prefect"):
     contributors = get_contributors(repo_info)
     print(f"Number of contributors 👷: {len(contributors)}")
 
-    upload = mimic_api_call()
+    upload = mimic_api_call()  # noqa
 
 
 # ### What just happened?

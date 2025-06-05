@@ -29,7 +29,7 @@ def main():
     )
 
     # List command
-    list_parser = subparsers.add_parser("list", help="List all examples")
+    list_parser = subparsers.add_parser("list", help="List all examples")  # noqa F841
 
     # Generate docs command
     docs_parser = subparsers.add_parser(

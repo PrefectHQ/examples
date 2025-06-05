@@ -121,7 +121,7 @@ def repo_info(repo_owner: str = "PrefectHQ", repo_name: str = "prefect"):
 # Callbacks give you a single, declarative place to hook monitoring, alerting,
 # or cleanup logic—separating *business* code from *operational* concerns.  No
 # more scattering `try/except` blocks or forgotten Slack calls throughout your
-# pipeline; Prefect guarantees thie callback runs exactly once per flow run.
+# pipeline; Prefect guarantees the callback runs exactly once per flow run.
 
 if __name__ == "__main__":
     repo_info()

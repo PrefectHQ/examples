@@ -131,7 +131,7 @@ def pipeline(contents: str):
     print(f"🚀 Starting workflow with data: {contents}")
 
     # Create a transaction that groups our tasks
-    with transaction() as txn:
+    with transaction():
         # Write data to file
         write_file(contents)
 

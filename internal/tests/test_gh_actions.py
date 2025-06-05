@@ -29,7 +29,7 @@ def _git_diff_names(*args: str) -> list[str]:
             text=True,
             check=True,
         )
-        return [l.strip() for l in result.stdout.splitlines() if l.strip()]
+        return [line.strip() for line in result.stdout.splitlines() if line.strip()]
     except Exception:
         return []
 
