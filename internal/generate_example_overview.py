@@ -12,7 +12,7 @@ def generate_cards(files: list[str]) -> str:
 
     for file in files:
         path, _ = file.split(".mdx")
-        with open(file, "r") as f:
+        with open(file) as f:
             text = f.read()
 
         pattern = r"title:\s*(.+)\ndescription:\s*(.+)"

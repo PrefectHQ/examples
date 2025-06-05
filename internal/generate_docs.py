@@ -5,11 +5,12 @@ Generate Markdown documentation from example files.
 This script converts Python example files to .mdx files for Mintlify documentation.
 """
 
-import sys
 import argparse
-from pathlib import Path
 import re
+import sys
 from itertools import islice
+from pathlib import Path
+
 from slugify import slugify
 
 from .utils import get_examples, render_example_md
@@ -66,7 +67,7 @@ def generate_docs(output_dir: str, extension: str = ".mdx"):
         #    lines for performance – front-matter should always be near the top.
         head = ""
         try:
-            with open(example.filename, "r", encoding="utf-8") as src_file:
+            with open(example.filename, encoding="utf-8") as src_file:
                 head = "".join(list(islice(src_file, 200)))
         except Exception:
             # If reading fails, assume no draft flag

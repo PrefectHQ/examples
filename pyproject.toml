@@ -34,4 +34,4 @@ packages = ["internal"]
 
 [tool.ruff.lint]
 extend-select = ["I", "UP"]
-extend-exclude = ["internal/__init__.py"]
+exclude = ["internal/__init__.py"]

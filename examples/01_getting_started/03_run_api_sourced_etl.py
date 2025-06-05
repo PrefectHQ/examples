@@ -63,7 +63,6 @@ import httpx
 import pandas as pd
 from prefect import flow, task
 
-
 # ---------------------------------------------------------------------------
 # Extract – fetch a single page of articles
 # ---------------------------------------------------------------------------

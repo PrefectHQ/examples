@@ -1,9 +1,10 @@
 import json
 import re
 import warnings
+from collections.abc import Iterator
 from enum import Enum
 from pathlib import Path
-from typing import Iterator, Optional, Tuple
+from typing import Optional, Tuple
 
 from pydantic import BaseModel
 

@@ -52,9 +52,8 @@
 import os
 from time import sleep
 
-from prefect import task, flow
+from prefect import flow, task
 from prefect.transactions import transaction
-
 
 # ## Define tasks with rollback behavior
 #
@@ -100,7 +99,7 @@ def quality_test():
     at least 2 lines of data. If not, it raises an error, which
     will trigger rollback of the entire transaction.
     """
-    with open("side-effect.txt", "r") as f:
+    with open("side-effect.txt") as f:
         data = f.readlines()
 
     if len(data) < 2:

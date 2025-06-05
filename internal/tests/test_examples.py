@@ -39,7 +39,7 @@ def run_example(file_path: str) -> bool:
         temp_path = temp_file.name
 
         # Read the original file
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             content = f.read()
 
         # Remove frontmatter

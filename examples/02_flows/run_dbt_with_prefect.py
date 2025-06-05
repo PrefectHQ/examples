@@ -59,7 +59,6 @@ from pathlib import Path
 from prefect import flow, task
 from prefect_dbt import PrefectDbtRunner, PrefectDbtSettings
 
-
 DEFAULT_REPO_ZIP = (
     "https://github.com/PrefectHQ/examples/archive/refs/heads/examples-markdown.zip"
 )

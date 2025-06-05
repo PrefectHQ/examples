@@ -14,10 +14,10 @@ uvx duckdb -c "select state, sum(flow_runs) from read_csv('./flow-runs.csv') gro
 """
 
 import asyncio
+
 import pendulum
 import typer
 from prefect.client.cloud import get_cloud_client
-
 
 STATES = [
     "SCHEDULED",

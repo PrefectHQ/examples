@@ -1,12 +1,11 @@
 from typing import Any, TypeVar
 
 import marvin
-
-from prefect import task, Task
+from prefect import Task, task
 from prefect.cache_policies import INPUTS, TASK_SOURCE
+from prefect.client.schemas.objects import TaskRun
 from prefect.states import State
 from prefect.task_worker import serve
-from prefect.client.schemas.objects import TaskRun
 
 T = TypeVar("T")
 
