@@ -57,7 +57,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
 import httpx
 import pandas as pd
@@ -126,7 +126,7 @@ def etl(api_base: str, pages: int, per_page: int, output_file: Path) -> None:
     """Run the end-to-end ETL for *pages* of articles."""
 
     # Extract – simple loop for clarity
-    raw_pages: List[list[dict[str, Any]]] = []
+    raw_pages: list[list[dict[str, Any]]] = []
     for page_number in range(1, pages + 1):
         raw_pages.append(fetch_page(page_number, api_base, per_page))
 
