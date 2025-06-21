@@ -9,7 +9,7 @@ This example demonstrates flow final state determination based on task states.
 import time
 
 from prefect import flow, task
-from prefect.futures import wait, PrefectFuture
+from prefect.futures import PrefectFuture, wait
 from prefect.states import State, StateType
 
 
