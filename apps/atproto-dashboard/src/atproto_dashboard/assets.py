@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 from prefect import flow
 from prefect.artifacts import create_markdown_artifact
@@ -66,8 +67,6 @@ def materialize_starter_pack_members(starter_pack_uri: str) -> list[dict]:
         for member in members
     ]
 
-    import json
-
     s3_bucket.write_path(
         "assets/starter-pack-members/latest.json",
         json.dumps(structured_data).encode("utf-8"),
@@ -104,7 +103,6 @@ def materialize_actor_feeds() -> dict[str, list[dict]]:
     """
     # Read the starter pack members from the asset
     s3_bucket = get_s3_bucket()
-    import json
 
     members_data = s3_bucket.read_path("assets/starter-pack-members/latest.json")
     members = json.loads(members_data)
