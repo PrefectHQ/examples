@@ -9,3 +9,9 @@ dependencies = ["prefect>=3.0.0"]
 
 [project.urls]
 Code = "https://github.com/PrefectHQ/examples"
+
+[dependency-groups]
+dev = ["pre-commit", "ruff", "ipython"]
+
+[tool.uv.workspace]
+members = ["apps/atproto-dashboard"]
