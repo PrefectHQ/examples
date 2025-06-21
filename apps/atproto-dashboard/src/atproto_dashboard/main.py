@@ -4,7 +4,6 @@ from atproto_dashboard.assets import ingest_atproto_data
 from atproto_dashboard.dbt_flow import transform_data
 from atproto_dashboard.pipeline import run_pipeline
 
-
 if __name__ == "__main__":
     # Create deployments
 

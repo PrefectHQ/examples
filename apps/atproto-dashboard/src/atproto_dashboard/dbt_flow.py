@@ -1,9 +1,9 @@
+import configparser
 import os
 import subprocess
-from pathlib import Path
-import configparser
-
 from datetime import datetime
+from pathlib import Path
+
 from prefect import flow, task
 from prefect.artifacts import create_markdown_artifact
 from prefect.assets import materialize

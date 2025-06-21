@@ -1,5 +1,5 @@
-from datetime import datetime
 import json
+from datetime import datetime
 
 from prefect import flow
 from prefect.artifacts import create_markdown_artifact
