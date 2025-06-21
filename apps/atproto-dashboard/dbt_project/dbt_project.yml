@@ -1,0 +1,18 @@
+name: "atproto_dashboard"
+version: "1.0.0"
+config-version: 2
+
+profile: "atproto"
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  +materialized: table
+  atproto_dashboard:
+    staging:
+      +materialized: view
+    analysis:
+      +materialized: table
