@@ -25,8 +25,6 @@ Code = "https://github.com/PrefectHQ/examples"
 [project.scripts]
 generate-docs = "internal.generate_docs:main"
 
-[dependency-groups]
-dev = ["pre-commit", "ruff", "ipython"]
 
 [build-system]
 requires = ["hatchling"]
@@ -40,4 +38,4 @@ extend-select = ["I", "UP"]
 exclude = ["internal/__init__.py"]
 
 [tool.uv.workspace]
-members = ["apps/atproto-dashboard
+members = ["apps/atproto-dashboard"]
