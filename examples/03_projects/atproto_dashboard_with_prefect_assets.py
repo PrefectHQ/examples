@@ -78,13 +78,12 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import pandas as pd
-from prefect import flow
+from prefect import flow, materialize
 from prefect.artifacts import create_table_artifact
 from prefect_aws import S3Bucket
-from prefect_dbt import PrefectDbtRunner, PrefectDbtSettings
 
 # For this example, we'll simulate the ATProto client and dbt integration
 # In a real implementation, you would use the actual atproto library and dbt models
@@ -95,11 +94,12 @@ from prefect_dbt import PrefectDbtRunner, PrefectDbtSettings
 # Using the new @materialize decorator for declarative data pipeline orchestration
 # Each asset automatically tracks dependencies and handles materialization
 
+
 @materialize(
     name="starter_pack_members",
     description="Extract member profiles from Bluesky starter pack",
 )
-def fetch_starter_pack_members() -> Dict[str, Any]:
+def fetch_starter_pack_members() -> dict[str, Any]:
     """Fetch member profiles from a Bluesky starter pack using ATProto APIs.
 
     This asset connects to the ATProto network and extracts profile information
@@ -127,7 +127,7 @@ def fetch_starter_pack_members() -> Dict[str, Any]:
                 "followers_count": 1250,
                 "following_count": 300,
                 "posts_count": 450,
-                "created_at": "2023-05-15T10:30:00Z"
+                "created_at": "2023-05-15T10:30:00Z",
             },
             {
                 "handle": "bob.data.social",
@@ -135,7 +135,7 @@ def fetch_starter_pack_members() -> Dict[str, Any]:
                 "followers_count": 890,
                 "following_count": 420,
                 "posts_count": 320,
-                "created_at": "2023-06-20T14:15:00Z"
+                "created_at": "2023-06-20T14:15:00Z",
             },
             {
                 "handle": "charlie.dev.social",
@@ -143,11 +143,11 @@ def fetch_starter_pack_members() -> Dict[str, Any]:
                 "followers_count": 2100,
                 "following_count": 150,
                 "posts_count": 780,
-                "created_at": "2023-04-10T09:45:00Z"
-            }
+                "created_at": "2023-04-10T09:45:00Z",
+            },
         ],
         "fetched_at": datetime.now(timezone.utc).isoformat(),
-        "total_members": 3
+        "total_members": 3,
     }
 
     print(f"Successfully fetched {len(members_data['members'])} starter pack members")
@@ -157,9 +157,9 @@ def fetch_starter_pack_members() -> Dict[str, Any]:
 @materialize(
     name="social_feeds",
     description="Extract recent posts and engagement data from member feeds",
-    upstream=["starter_pack_members"]  # Depends on member data
+    upstream=["starter_pack_members"],  # Depends on member data
 )
-def fetch_social_feeds(starter_pack_members: Dict[str, Any]) -> Dict[str, Any]:
+def fetch_social_feeds(starter_pack_members: dict[str, Any]) -> dict[str, Any]:
     """Fetch recent posts and engagement data from starter pack member feeds.
 
     Uses the member list from the starter pack asset to fetch recent posts,
@@ -186,7 +186,7 @@ def fetch_social_feeds(starter_pack_members: Dict[str, Any]) -> Dict[str, Any]:
                 "likes_count": 45,
                 "reposts_count": 12,
                 "replies_count": 8,
-                "uri": "at://alice.bsky.social/app.bsky.feed.post/abc123"
+                "uri": "at://alice.bsky.social/app.bsky.feed.post/abc123",
             },
             {
                 "author": "bob.data.social",
@@ -195,7 +195,7 @@ def fetch_social_feeds(starter_pack_members: Dict[str, Any]) -> Dict[str, Any]:
                 "likes_count": 89,
                 "reposts_count": 23,
                 "replies_count": 15,
-                "uri": "at://bob.data.social/app.bsky.feed.post/def456"
+                "uri": "at://bob.data.social/app.bsky.feed.post/def456",
             },
             {
                 "author": "charlie.dev.social",
@@ -204,11 +204,11 @@ def fetch_social_feeds(starter_pack_members: Dict[str, Any]) -> Dict[str, Any]:
                 "likes_count": 156,
                 "reposts_count": 67,
                 "replies_count": 34,
-                "uri": "at://charlie.dev.social/app.bsky.feed.post/ghi789"
-            }
+                "uri": "at://charlie.dev.social/app.bsky.feed.post/ghi789",
+            },
         ],
         "fetched_at": datetime.now(timezone.utc).isoformat(),
-        "total_posts": 3
+        "total_posts": 3,
     }
 
     print(f"Successfully fetched {len(feeds_data['posts'])} posts from member feeds")
@@ -218,9 +218,11 @@ def fetch_social_feeds(starter_pack_members: Dict[str, Any]) -> Dict[str, Any]:
 @materialize(
     name="s3_raw_data",
     description="Store raw social data in S3 for reliable persistence",
-    upstream=["starter_pack_members", "social_feeds"]
+    upstream=["starter_pack_members", "social_feeds"],
 )
-def store_in_s3(starter_pack_members: Dict[str, Any], social_feeds: Dict[str, Any]) -> Dict[str, str]:
+def store_in_s3(
+    starter_pack_members: dict[str, Any], social_feeds: dict[str, Any]
+) -> dict[str, str]:
     """Store raw social media data in S3 for reliable persistence and downstream processing.
 
     Takes the raw data from ATProto ingestion and stores it in S3 with proper
@@ -256,7 +258,7 @@ def store_in_s3(starter_pack_members: Dict[str, Any], social_feeds: Dict[str, An
         return {
             "members_path": str(members_path),
             "feeds_path": str(feeds_path),
-            "storage_type": "local"
+            "storage_type": "local",
         }
 
     # Real S3 storage
@@ -270,29 +272,25 @@ def store_in_s3(starter_pack_members: Dict[str, Any], social_feeds: Dict[str, An
 
     # Upload to S3
     s3_bucket.upload_from_string(
-        json.dumps(starter_pack_members, indent=2),
-        members_key
+        json.dumps(starter_pack_members, indent=2), members_key
     )
-    s3_bucket.upload_from_string(
-        json.dumps(social_feeds, indent=2),
-        feeds_key
-    )
+    s3_bucket.upload_from_string(json.dumps(social_feeds, indent=2), feeds_key)
 
     print(f"Uploaded data to S3 bucket {bucket_name}")
 
     return {
         "members_path": f"s3://{bucket_name}/{members_key}",
         "feeds_path": f"s3://{bucket_name}/{feeds_key}",
-        "storage_type": "s3"
+        "storage_type": "s3",
     }
 
 
 @materialize(
     name="analytics_models",
     description="Transform raw data into analytics models using dbt",
-    upstream=["s3_raw_data"]
+    upstream=["s3_raw_data"],
 )
-def run_dbt_transformations(s3_raw_data: Dict[str, str]) -> Dict[str, Any]:
+def run_dbt_transformations(s3_raw_data: dict[str, str]) -> dict[str, Any]:
     """Transform raw social data into analytics-ready models using dbt.
 
     Runs dbt models that create staging tables for profiles and feeds,
@@ -323,12 +321,18 @@ def run_dbt_transformations(s3_raw_data: Dict[str, str]) -> Dict[str, Any]:
 
     # Simulated analytics results
     analytics_summary = {
-        "models_built": ["stg_profiles", "stg_feeds", "daily_activity", "top_posts", "member_stats"],
+        "models_built": [
+            "stg_profiles",
+            "stg_feeds",
+            "daily_activity",
+            "top_posts",
+            "member_stats",
+        ],
         "total_profiles": 3,
         "total_posts": 3,
         "avg_engagement_rate": 0.125,
         "top_post_likes": 156,
-        "transformation_completed_at": datetime.now(timezone.utc).isoformat()
+        "transformation_completed_at": datetime.now(timezone.utc).isoformat(),
     }
 
     print("dbt transformations completed successfully")
@@ -338,9 +342,9 @@ def run_dbt_transformations(s3_raw_data: Dict[str, str]) -> Dict[str, Any]:
 @materialize(
     name="dashboard_data",
     description="Prepare final datasets for dashboard visualization",
-    upstream=["analytics_models"]
+    upstream=["analytics_models"],
 )
-def prepare_dashboard_data(analytics_models: Dict[str, Any]) -> Dict[str, Any]:
+def prepare_dashboard_data(analytics_models: dict[str, Any]) -> dict[str, Any]:
     """Prepare final datasets optimized for dashboard visualization.
 
     Creates aggregated datasets and summary statistics that power
@@ -362,12 +366,12 @@ def prepare_dashboard_data(analytics_models: Dict[str, Any]) -> Dict[str, Any]:
             "total_members": analytics_models["total_profiles"],
             "total_posts": analytics_models["total_posts"],
             "avg_engagement_rate": analytics_models["avg_engagement_rate"],
-            "top_post_likes": analytics_models["top_post_likes"]
+            "top_post_likes": analytics_models["top_post_likes"],
         },
         "engagement_trends": [
             {"date": "2024-06-25", "posts": 8, "likes": 245, "reposts": 67},
             {"date": "2024-06-26", "posts": 12, "likes": 389, "reposts": 89},
-            {"date": "2024-06-27", "posts": 15, "likes": 456, "reposts": 102}
+            {"date": "2024-06-27", "posts": 15, "likes": 456, "reposts": 102},
         ],
         "top_content": [
             {
@@ -376,17 +380,17 @@ def prepare_dashboard_data(analytics_models: Dict[str, Any]) -> Dict[str, Any]:
                 "engagement_score": 257,
                 "likes": 156,
                 "reposts": 67,
-                "replies": 34
+                "replies": 34,
             }
         ],
-        "prepared_at": datetime.now(timezone.utc).isoformat()
+        "prepared_at": datetime.now(timezone.utc).isoformat(),
     }
 
     # Create Prefect artifact for dashboard data
     create_table_artifact(
         key="dashboard-overview",
         table=pd.DataFrame([dashboard_datasets["overview_metrics"]]),
-        description="Dashboard overview metrics"
+        description="Dashboard overview metrics",
     )
 
     print("Dashboard datasets prepared successfully")
@@ -398,6 +402,7 @@ def prepare_dashboard_data(analytics_models: Dict[str, Any]) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 # This flow orchestrates the asset materialization pipeline with automatic
 # dependency resolution and error handling.
+
 
 @flow(name="atproto_social_analytics", log_prints=True)
 def atproto_analytics_pipeline() -> None:
@@ -425,7 +430,9 @@ def atproto_analytics_pipeline() -> None:
     dashboard_data = prepare_dashboard_data(analytics)
 
     print("✅ Social analytics pipeline completed successfully!")
-    print(f"📊 Dashboard data ready with {dashboard_data['overview_metrics']['total_posts']} posts analyzed")
+    print(
+        f"📊 Dashboard data ready with {dashboard_data['overview_metrics']['total_posts']} posts analyzed"
+    )
     print("🔗 Next step: Launch Streamlit dashboard with 'streamlit run dashboard.py'")
 
 
