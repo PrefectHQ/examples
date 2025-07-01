@@ -1,0 +1,25 @@
+atproto:
+  target: prod
+  outputs:
+    dev:
+      type: duckdb
+      schema: atproto_dev
+      path: "local.duckdb"
+      threads: 1
+      extensions: 
+        - httpfs
+      settings:
+        s3_region: "us-east-1"
+        s3_access_key_id: "{{ env_var('AWS_ACCESS_KEY_ID') }}"
+        s3_secret_access_key: "{{ env_var('AWS_SECRET_ACCESS_KEY') }}"
+    prod:
+      type: duckdb
+      schema: atproto
+      path: ":memory:"  # Use in-memory for production runs
+      threads: 4
+      extensions: 
+        - httpfs
+      settings:
+        s3_region: "us-east-1"
+        s3_access_key_id: "{{ env_var('AWS_ACCESS_KEY_ID') }}"
+        s3_secret_access_key: "{{ env_var('AWS_SECRET_ACCESS_KEY') }}"

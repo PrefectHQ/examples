@@ -1,0 +1,110 @@
+# ATProto Dashboard with Prefect Assets
+
+
+
+A simple ATProto dashboard example using Prefect Assets, demonstrating how Prefect provides a clean and straightforward approach to building data pipelines.
+
+## Features
+
+- **Prefect Assets**: Uses the new `@materialize` decorator for asset-based data pipelines
+- **ATProto Integration**: Fetches data from Bluesky starter packs and user feeds  
+- **S3 Storage**: Stores assets in S3 using prefect-aws with implicit AWS credentials
+- **dbt Integration**: Transforms data using dbt with DuckDB
+- **Streamlit Dashboard**: Interactive web dashboard for data visualization
+- **Simplified Architecture**: No complex resource management or tenacity retries needed
+
+## Setup
+
+1. **Create a `.env` file** in the repository root (not in this directory):
+```bash
+BSKY_LOGIN=your.handle@bsky.social
+BSKY_APP_PASSWORD=your-app-password
+AWS_BUCKET_NAME=your-s3-bucket
+```
+
+2. **Install dependencies**:
+```bash
+uv pip install -e .
+```
+
+3. **Configure AWS credentials** in `~/.aws/credentials`:
+```
+[default]
+aws_access_key_id = YOUR_KEY
+aws_secret_access_key = YOUR_SECRET
+```
+
+## Running the Pipeline
+
+Run the complete pipeline:
+```bash
+python -m atproto_dashboard.pipeline
+```
+
+Or run individual components:
+```bash
+# Just ingestion
+python -m atproto_dashboard.assets
+
+# Just dbt transformation
+python -m atproto_dashboard.dbt_flow
+```
+
+## Viewing the Dashboard
+
+### Option 1: Streamlit Web Dashboard (Recommended)
+```bash
+streamlit run src/atproto_dashboard/dashboard.py
+```
+This opens an interactive web dashboard at http://localhost:8501 with:
+- Overview metrics and engagement stats
+- Member listings from the starter pack
+- Recent posts with filtering and sorting
+- Analysis charts and top posts
+
+### Option 2: Query dbt Models Directly
+The dbt models create the following views you can query:
+- `stg_profiles` - Starter pack member profiles
+- `stg_feeds` - Raw feed data
+- `daily_activity` - Aggregated daily post activity
+- `top_posts` - Top posts by engagement
+
+Query them with any DuckDB client or use the included query script:
+```bash
+python src/atproto_dashboard/query_dashboard.py
+```
+
+### Option 3: View in Prefect UI
+The pipeline creates Prefect artifacts that you can view in the Prefect UI:
+- Ingestion summary with member/post counts
+- dbt model build results
+- Asset materialization history
+
+## Deployment
+
+Deploy to Prefect Cloud:
+```bash
+python -m atproto_dashboard.main
+```
+
+## Project Structure
+
+```
+atproto-dashboard/
+├── src/atproto_dashboard/
+│   ├── assets.py           # Ingestion assets (starter pack, feeds)
+│   ├── dbt_flow.py         # dbt transformation asset
+│   ├── pipeline.py         # Main pipeline orchestration
+│   ├── dashboard.py        # Streamlit dashboard
+│   ├── query_dashboard.py  # CLI query tool
+│   ├── main.py             # Deployment script
+│   ├── settings.py         # Configuration
+│   └── resources/
+│       └── atproto_client.py  # ATProto/Bluesky client
+├── dbt_project/
+│   ├── models/
+│   │   ├── staging/        # Raw data staging
+│   │   └── analysis/       # Analytics models
+│   └── profiles.yml        # dbt configuration
+└── pyproject.toml
+```
