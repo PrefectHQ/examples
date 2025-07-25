@@ -1,0 +1,7 @@
+demo:
+  outputs:
+    dev:
+      type: duckdb
+      path: /Users/wayne/Projects/examples/examples/02_flows/prefect_dbt_project/demo.duckdb
+      threads: 1
+  target: dev
