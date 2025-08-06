@@ -1,0 +1,30 @@
+# This automation detects zombie flow runs that have not sent a heartbeat in the last 90 seconds
+# You must set PREFECT_RUNNER_HEARTBEAT_FREQUENCY=30 in your job template to enable heartbeats from runners.
+# see more: https://docs.prefect.io/v3/advanced/detect-zombie-flows
+#
+# prefect automation create --from-file zombie.yaml
+---
+name: Crash zombie flows
+description: Mark zombie flow runs as crashed
+trigger:
+  type: event
+  match:
+    prefect.resource.id:
+      - prefect.flow-run.*
+  after:
+  - prefect.flow-run.heartbeat
+  expect:
+  - prefect.flow-run.heartbeat
+  - prefect.flow-run.Completed
+  - prefect.flow-run.Failed
+  - prefect.flow-run.Cancelled
+  - prefect.flow-run.Crashed
+  for_each:
+  - prefect.resource.id
+  posture: Proactive
+  threshold: 1
+  within: 90
+actions:
+  - type: change-flow-run-state
+    state: CRASHED
+    message: "Flow run marked as crashed due to missing heartbeats."
