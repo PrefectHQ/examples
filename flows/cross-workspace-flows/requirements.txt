@@ -1,0 +1,2 @@
+prefect>=3.4.19
+prefect_gcp
