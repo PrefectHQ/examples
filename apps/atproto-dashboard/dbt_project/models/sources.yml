@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: s3_raw
+    description: "Raw data from S3 bucket"
+    meta:
+      external_location: "read_ndjson_objects('s3://{{ env_var('AWS_BUCKET_NAME') }}/atproto_{name}/**/*.json', filename=true)"
+    tables:
+      - name: actor_feed_snapshot
+        description: "Raw feed data from actors"
+      - name: starter_pack_snapshot
+        description: "Raw starter pack member data"
