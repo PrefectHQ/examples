@@ -8,6 +8,15 @@ This repository contains narrative-driven, opinionated examples that showcase Pr
 
 ## Repository Structure
 
+> **In transition.** This repo is becoming the single home for Prefect, Dagster and FastMCP examples. New examples go in the product folders below and follow the [example contract](internal/example-contract.md); every one is listed in [`CATALOG.yaml`](CATALOG.yaml). Existing Prefect examples move into `prefect/` in a later phase. Some files are loaded by other repos from `main` and must not move yet; see [`internal/DOWNSTREAM.md`](internal/DOWNSTREAM.md).
+>
+> - **prefect/**, **dagster/**, **fastmcp/** – Examples for each product
+> - **stacks/** – Examples that combine products
+> - **learn/** – Guided curricula
+> - **demos/** – Frozen talk, workshop and SE demos, kept out of the docs
+
+The current layout:
+
 - **examples/** – Narrative-driven Python examples grouped by topic  
   - **01_getting_started/** – First steps with Prefect  
   - **02_flows/** – Deeper exploration of various flow scenarios 

@@ -1,0 +1,32 @@
+name: Repo checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  repo-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --locked
+
+      - name: Protected paths still exist
+        run: uv run python -m internal.protected
+
+      - name: Examples follow the contract and CATALOG.yaml is current
+        run: uv run python -m internal.catalog --check
+
+      - name: Internal tests
+        run: uv run pytest -q internal/tests/test_catalog.py internal/tests/test_protected.py internal/tests/test_main.py

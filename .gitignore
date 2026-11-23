@@ -162,8 +162,8 @@ cython_debug/
 #.idea/
 
 # uv stuff
+# uv.lock is committed: every folder example ships its own lockfile.
 .python-version
-uv.lock
 
 # vscode
 .vscode/

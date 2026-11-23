@@ -12,7 +12,9 @@ dependencies = [
     "pandas>=2.2.3",
     "prefect-dbt==0.7.0rc1",
     "prefect[dbt]>=3.0.0",
+    "pydantic>=2",
     "pytest>=8.3.5",
+    "pyyaml>=6",
     "requests>=2.32.3",
 ]
 
