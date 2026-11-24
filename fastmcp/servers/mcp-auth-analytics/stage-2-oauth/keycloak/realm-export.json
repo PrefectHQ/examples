@@ -1,0 +1,315 @@
+{
+  "realm": "analytics-demo",
+  "displayName": "Analytics demo",
+  "enabled": true,
+  "registrationAllowed": false,
+  "defaultDefaultClientScopes": [
+    "openid",
+    "profile",
+    "email",
+    "analytics:read"
+  ],
+  "defaultOptionalClientScopes": [],
+  "roles": {
+    "realm": [
+      {
+        "name": "analyst"
+      },
+      {
+        "name": "finance"
+      },
+      {
+        "name": "admin"
+      },
+      {
+        "name": "eu-data"
+      }
+    ]
+  },
+  "clientScopes": [
+    {
+      "name": "openid",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "profile",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "username",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "email",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "email",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "email",
+            "claim.name": "email",
+            "jsonType.label": "String",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "analytics:read",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "claim.name": "realm_access.roles",
+            "multivalued": "true",
+            "jsonType.label": "String",
+            "userinfo.token.claim": "false",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "username",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "analytics-server-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "http://localhost:8000",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ]
+    }
+  ],
+  "scopeMappings": [
+    {
+      "clientScope": "analytics:read",
+      "roles": [
+        "analyst",
+        "finance",
+        "admin",
+        "eu-data"
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "nightly-report-bot",
+      "name": "Nightly report bot",
+      "description": "Non-human caller using the client credentials grant",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "nightly-report-bot-secret",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "analytics:read"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "alice",
+      "email": "alice@example.com",
+      "firstName": "Alice",
+      "lastName": "Demo",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "alice",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "analyst",
+        "offline_access"
+      ]
+    },
+    {
+      "username": "fran",
+      "email": "fran@example.com",
+      "firstName": "Fran",
+      "lastName": "Demo",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "fran",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "finance",
+        "offline_access"
+      ]
+    },
+    {
+      "username": "adam",
+      "email": "adam@example.com",
+      "firstName": "Adam",
+      "lastName": "Demo",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "adam",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin",
+        "eu-data",
+        "offline_access"
+      ]
+    },
+    {
+      "username": "service-account-nightly-report-bot",
+      "enabled": true,
+      "serviceAccountClientId": "nightly-report-bot",
+      "realmRoles": [
+        "analyst"
+      ]
+    }
+  ],
+  "clientProfiles": {
+    "profiles": [
+      {
+        "name": "mcp-cimd",
+        "description": "MCP clients identified by a Client ID Metadata Document",
+        "executors": [
+          {
+            "executor": "client-id-metadata-document",
+            "configuration": {
+              "cimd-allow-http-scheme": "false",
+              "cimd-allow-permitted-domains": [
+                "claude.ai",
+                "localhost",
+                "127.0.0.1"
+              ],
+              "cimd-restrict-same-domain": "false",
+              "only-allow-confidential-client": "false"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "clientPolicies": {
+    "policies": [
+      {
+        "name": "mcp-cimd",
+        "description": "Send https client IDs on trusted domains to the CIMD profile",
+        "enabled": true,
+        "conditions": [
+          {
+            "condition": "client-id-uri",
+            "configuration": {
+              "client-id-uri-scheme": [
+                "https"
+              ],
+              "client-id-uri-allow-permitted-domains": [
+                "claude.ai"
+              ]
+            }
+          }
+        ],
+        "profiles": [
+          "mcp-cimd"
+        ]
+      }
+    ]
+  },
+  "components": {
+    "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy": [
+      {
+        "name": "Trusted Hosts",
+        "providerId": "trusted-hosts",
+        "subType": "anonymous",
+        "subComponents": {},
+        "config": {
+          "host-sending-registration-request-must-match": [
+            "false"
+          ],
+          "trusted-hosts": [
+            "localhost"
+          ],
+          "client-uris-must-match": [
+            "true"
+          ]
+        }
+      }
+    ]
+  }
+}

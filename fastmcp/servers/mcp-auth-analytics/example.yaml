@@ -1,0 +1,7 @@
+title: "MCP authentication: API keys, OAuth and roles"
+description: One FastMCP server secured in three stages, from a shared API key to OAuth with Keycloak to per-tool roles with an audit log.
+owner: "@PrefectHQ/devrel"
+targets:
+  fastmcp: "==4.2.2"
+test: skip
+tags: [auth, oauth, keycloak, cimd]
