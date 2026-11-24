@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -49,7 +50,16 @@ RUNNER_FILES = (
 )
 
 # Import a file as a module without running its ``__main__`` block.
-IMPORT_ONLY = "import runpy, sys; runpy.run_path(sys.argv[1], run_name='__example__')"
+# Like ``python <file>``, put the file's own folder first on sys.path so it can
+# import the modules next to it.
+IMPORT_ONLY = (
+    "import os, runpy, sys; path = sys.argv[1]; sys.argv = sys.argv[1:]; "
+    "sys.path.insert(0, os.path.dirname(os.path.abspath(path))); "
+    "runpy.run_path(path, run_name='__example__')"
+)
+
+# After a timeout, how long the example gets to exit on SIGTERM before SIGKILL.
+GRACE_SECONDS = 10
 
 Outcome = Literal["passed", "failed", "timed out", "skipped"]
 
@@ -131,6 +141,9 @@ def build_command(
     uv_flags: list[str] = []
     if prerelease:
         uv_flags += ["--prerelease", "allow"]
+        # A lockfile can't be used as-is with a different pre-release policy,
+        # so re-resolve what the example targets when nothing else is named.
+        upgrade = upgrade or list(meta.targets)
 
     if example.kind == "folder":
         entry = meta.entrypoint or "main.py"
@@ -170,6 +183,41 @@ def _in_actions() -> bool:
     return os.environ.get("GITHUB_ACTIONS") == "true"
 
 
+def run_process_group(
+    argv: list[str], *, cwd: Path, env: dict[str, str], timeout: int
+) -> int:
+    """Run argv in its own process group and return its exit code.
+
+    On timeout the whole group is ended, not just ``uv``, so an example's own
+    processes can't keep running into the next example. Raises
+    ``subprocess.TimeoutExpired`` after cleaning up.
+    """
+    proc = subprocess.Popen(argv, cwd=cwd, env=env, start_new_session=True)
+    try:
+        return proc.wait(timeout=timeout)
+    except BaseException:  # the timeout, or Ctrl-C while running locally
+        _end_group(proc)
+        raise
+
+
+def _end_group(proc: subprocess.Popen) -> None:
+    if not hasattr(os, "killpg"):  # Windows
+        proc.kill()
+        proc.wait()
+        return
+    try:
+        os.killpg(proc.pid, signal.SIGTERM)
+        try:
+            proc.wait(timeout=GRACE_SECONDS)
+        except subprocess.TimeoutExpired:
+            pass
+        # The group can outlive its leader, so always finish it off.
+        os.killpg(proc.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass  # every process in the group has exited
+    proc.wait()
+
+
 def run_example(
     example: Example,
     root: Path = REPO_ROOT,
@@ -177,7 +225,7 @@ def run_example(
     command: tuple[list[str], str] | None = None,
     upgrade: Sequence[str] = (),
     prerelease: bool = False,
-    run: Callable[..., subprocess.CompletedProcess] = subprocess.run,
+    run: Callable[..., int] = run_process_group,
 ) -> Result:
     meta = example.meta
     result = Result(example.slug, example.path, meta.owner, "skipped")
@@ -200,7 +248,7 @@ def run_example(
     print(f"$ (cd {cwd} && {result.command})", flush=True)
     start = time.monotonic()
     try:
-        proc = run(argv, cwd=root / cwd, env=env, timeout=meta.timeout, check=False)
+        returncode = run(argv, cwd=root / cwd, env=env, timeout=meta.timeout)
     except subprocess.TimeoutExpired:
         result.outcome = "timed out"
         result.reason = f"no exit after {meta.timeout}s"
@@ -208,11 +256,11 @@ def run_example(
         result.outcome = "failed"
         result.reason = str(exc)
     else:
-        if proc.returncode == 0:
+        if returncode == 0:
             result.outcome = "passed"
         else:
             result.outcome = "failed"
-            result.reason = f"exit code {proc.returncode}"
+            result.reason = f"exit code {returncode}"
     result.seconds = round(time.monotonic() - start, 1)
     if _in_actions():
         print("::endgroup::")

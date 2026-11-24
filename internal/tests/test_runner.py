@@ -1,8 +1,11 @@
 """Tests for selecting, building commands for and running examples."""
 
 import json
+import os
+import signal
 import subprocess
 import sys
+import time
 
 import pytest
 
@@ -166,6 +169,29 @@ def test_upgrade_and_prerelease(repo):
     assert argv[4:6] == ["--refresh-package", "prefect"]
 
 
+def test_prerelease_alone_upgrades_targets(repo):
+    # --locked would make uv refuse to run with a different pre-release policy.
+    argv, _ = build_command(by_slug(repo, "weather"), prerelease=True)
+    assert "--locked" not in argv
+    assert argv[4:6] == ["--upgrade-package", "fastmcp"]
+
+    argv, _ = build_command(by_slug(repo, "hello"), prerelease=True)
+    assert argv[4:6] == ["--refresh-package", "prefect"]
+
+
+def test_import_only_finds_modules_next_to_a_nested_entrypoint(tmp_path):
+    write(tmp_path, "src/helper.py", "VALUE = 1\n")
+    write(
+        tmp_path,
+        "src/main.py",
+        "import helper\nif __name__ == '__main__':\n    raise SystemExit(5)\n",
+    )
+    proc = subprocess.run(
+        [sys.executable, "-c", runner.IMPORT_ONLY, "src/main.py"], cwd=tmp_path
+    )
+    assert proc.returncode == 0  # imported helper, skipped the __main__ block
+
+
 # Running ---------------------------------------------------------------------
 
 
@@ -189,6 +215,33 @@ def test_run_times_out(tmp_path):
         command=python("import time; time.sleep(10)"),
     )
     assert result.outcome == "timed out"
+
+
+@pytest.mark.skipif(not hasattr(os, "killpg"), reason="POSIX process groups")
+def test_timeout_ends_the_examples_child_processes(tmp_path, monkeypatch):
+    monkeypatch.setattr(runner, "GRACE_SECONDS", 1)
+    write(tmp_path, "prefect/hello.py", with_fields(FILE_EXAMPLE, "# timeout: 1"))
+    pid_file = tmp_path / "child.pid"
+    # Like `uv run`: a parent process that starts the real example as a child.
+    code = (
+        "import subprocess, sys, time; "
+        "child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)']); "
+        f"open({str(pid_file)!r}, 'w').write(str(child.pid)); time.sleep(60)"
+    )
+    result = run_example(by_slug(tmp_path, "hello"), tmp_path, command=python(code))
+    assert result.outcome == "timed out"
+
+    child = int(pid_file.read_text())
+    deadline = time.monotonic() + 5
+    while time.monotonic() < deadline:
+        try:
+            os.kill(child, 0)
+        except ProcessLookupError:
+            break
+        time.sleep(0.1)
+    else:
+        os.kill(child, signal.SIGKILL)
+        pytest.fail("the example's child process outlived the timeout")
 
 
 def test_run_sets_example_env(tmp_path):
