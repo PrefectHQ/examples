@@ -1,0 +1,37 @@
+name: Changed examples
+
+# Runs only the examples a pull request changes. Contract and catalog checks
+# run in repo-checks.yml.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-examples-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changed-examples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the runner diffs against the base branch
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --locked
+
+      - name: Run changed examples
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          PREFECT_HOME: ${{ runner.temp }}/prefect
+        run: uv run python -m internal.runner run --changed-since "origin/$BASE_REF"

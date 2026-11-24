@@ -30,6 +30,7 @@ FROZEN_ROOTS = ("demos",)
 FOLDER_MANIFEST = "example.yaml"
 FOLDER_REQUIRED_FILES = ("pyproject.toml", "uv.lock", "README.md")
 RUNNER_FIELDS = ("cmd", "args", "env", "dependencies", "icon", "draft")
+DEFAULT_ENTRYPOINT = "main.py"
 SKIP_DIRS = {"__pycache__", ".venv", "node_modules"}
 EXACT_PIN = re.compile(r"===?\s*[0-9][0-9A-Za-z.+!-]*")
 
@@ -57,6 +58,9 @@ class ExampleMeta(BaseModel):
     requires_secrets: list[str] = Field(default_factory=list)
     timeout: int = Field(default=600, gt=0)
     tags: list[str] = Field(default_factory=list)
+
+    # Folder examples only: the file the runner executes, relative to the folder.
+    entrypoint: str | None = None
 
     # Runner fields used by the existing single-file tooling.
     cmd: list[str] | None = None
@@ -189,6 +193,13 @@ def _load_example(
                 "a folder example runs from its own pyproject.toml"
             )
             return None
+        raw = {"entrypoint": DEFAULT_ENTRYPOINT, **raw}
+    elif "entrypoint" in raw:
+        errors.append(
+            f"{rel}: entrypoint only applies to folder examples; "
+            "a single-file example is its own entrypoint"
+        )
+        return None
 
     data = _apply_location_rules(raw, top, rel, errors)
     if data is None:
@@ -217,6 +228,13 @@ def _walk(directory: Path, *, top: str, root: Path, result: Discovery) -> None:
             _load_file(child, top=top, root=root, result=result)
 
 
+def _entrypoint_ok(folder: Path, entrypoint: str | None) -> bool:
+    if not entrypoint:
+        return False
+    target = (folder / entrypoint).resolve()
+    return target.is_file() and target.is_relative_to(folder.resolve())
+
+
 def _load_folder(folder: Path, *, top: str, root: Path, result: Discovery) -> None:
     rel = _rel(folder, root)
     errors = result.errors
@@ -243,6 +261,11 @@ def _load_folder(folder: Path, *, top: str, root: Path, result: Discovery) -> No
         return
 
     meta = _load_example(raw, top=top, rel=rel, kind="folder", errors=errors)
+    if meta is not None and not _entrypoint_ok(folder, meta.entrypoint):
+        errors.append(
+            f"{rel}: entrypoint {meta.entrypoint!r} is not a file inside the folder"
+        )
+        meta = None
     if meta is not None and not missing:
         result.examples.append(Example(folder.name, rel, "folder", meta))
 

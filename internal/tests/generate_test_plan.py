@@ -15,20 +15,18 @@ from ..utils import Example, get_examples
 
 
 def get_changed_files_from_env() -> list[str]:
-    """Get changed files from GitHub Actions environment variables."""
-    if "GITHUB_EVENT_PATH" in os.environ:
-        with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as f:
-            event = json.load(f)
+    """Get the files a pull request changes, in GitHub Actions.
 
-        # Extract changed files from the pull request
-        if "pull_request" in event:
-            files = []
-            if "changed_files" in event["pull_request"]:
-                for file_info in event["pull_request"]["changed_files"]:
-                    files.append(file_info["filename"])
-            return files
+    The event payload's ``pull_request.changed_files`` is a count, not a list,
+    so diff against the base branch instead. Needs a checkout with history
+    (``fetch-depth: 0``).
+    """
+    base = os.environ.get("GITHUB_BASE_REF")
+    if not base:
+        return []
+    from ..runner import changed_files
 
-    return []
+    return changed_files(f"origin/{base}")
 
 
 def get_changed_files_from_git_diff(commit_range: str) -> list[str]:

@@ -29,4 +29,4 @@ jobs:
         run: uv run python -m internal.catalog --check
 
       - name: Internal tests
-        run: uv run pytest -q internal/tests/test_catalog.py internal/tests/test_protected.py internal/tests/test_main.py
+        run: uv run pytest -q internal/tests/test_catalog.py internal/tests/test_protected.py internal/tests/test_runner.py internal/tests/test_main.py

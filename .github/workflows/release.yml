@@ -1,0 +1,96 @@
+name: Examples after release
+
+# Runs every maintained example:
+# - when Prefect, Dagster or FastMCP publishes a release or pre-release. Each
+#   product's release workflow sends a repository_dispatch event, for example:
+#     gh api repos/PrefectHQ/examples/dispatches \
+#       -f event_type=prefect-release -F client_payload[prerelease]=false
+# - weekly, to catch drift in third-party services between releases
+# - on demand
+# Each failure opens (or comments on) an issue for the example's owner.
+
+on:
+  repository_dispatch:
+    types: [prefect-release, dagster-release, fastmcp-release]
+  schedule:
+    - cron: "0 9 * * 1" # Mondays 09:00 UTC
+  workflow_dispatch:
+    inputs:
+      product:
+        description: Only run examples for this product
+        type: choice
+        options: [all, prefect, dagster, fastmcp]
+        default: all
+      prerelease:
+        description: Test against the newest pre-release
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: release-examples-${{ github.event.action || github.event_name }}
+  cancel-in-progress: false
+
+jobs:
+  examples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --locked
+
+      - name: Choose what to run
+        id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+          DISPATCH_TYPE: ${{ github.event.action }}
+          DISPATCH_PRERELEASE: ${{ github.event.client_payload.prerelease }}
+          INPUT_PRODUCT: ${{ inputs.product }}
+          INPUT_PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          args=(--all)
+          case "$EVENT" in
+            repository_dispatch)
+              product="${DISPATCH_TYPE%-release}"
+              args+=(--product "$product" --upgrade "$product")
+              [ "$DISPATCH_PRERELEASE" = "true" ] && args+=(--prerelease)
+              trigger="$product release"
+              ;;
+            workflow_dispatch)
+              if [ "$INPUT_PRODUCT" != "all" ]; then
+                args+=(--product "$INPUT_PRODUCT" --upgrade "$INPUT_PRODUCT")
+              fi
+              [ "$INPUT_PRERELEASE" = "true" ] && args+=(--prerelease)
+              trigger="manual"
+              ;;
+            *)
+              trigger="weekly"
+              ;;
+          esac
+          echo "args=${args[*]}" >> "$GITHUB_OUTPUT"
+          echo "trigger=$trigger" >> "$GITHUB_OUTPUT"
+
+      - name: Run examples
+        env:
+          ARGS: ${{ steps.scope.outputs.args }}
+          PREFECT_HOME: ${{ runner.temp }}/prefect
+        # ARGS is built above from fixed words and a product name that the
+        # runner checks against its allowed choices.
+        run: uv run python -m internal.runner run $ARGS --results results.json
+
+      - name: Open issues for failures
+        if: failure() && hashFiles('results.json') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXAMPLES_TRIGGER: ${{ steps.scope.outputs.trigger }}
+        run: uv run python -m internal.runner open-issues results.json

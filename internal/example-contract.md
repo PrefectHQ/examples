@@ -41,8 +41,31 @@ Any other `.py` file under the product folders must have a frontmatter block, so
 | `requires_secrets` | no | List of environment variable names | `[]` |
 | `timeout` | no | Seconds | `600` |
 | `tags` | no | List of strings | `[]` |
+| `entrypoint` | no, folder examples only | File the runner executes, relative to the folder | `main.py` |
 
 Single-file examples may also set the runner fields `cmd`, `args`, `env`, `dependencies`, `icon` and `draft` used by the existing tooling. Any other field is an error, so typos fail CI instead of being ignored.
+
+## How examples run
+
+`python -m internal.runner` runs examples in CI. Each one gets its own environment:
+
+- **Folder example:** `uv run --project <folder> --locked python <entrypoint>`, from inside the folder, so it uses its own `uv.lock`.
+- **Single-file example:** a throwaway environment with its `targets` and `dependencies`, then `python <file>` (or `cmd` and `args` if set).
+- **`test: import-only`** imports the entrypoint without running its `if __name__ == "__main__"` block. Use it for servers and anything that doesn't exit on its own.
+- **`test: skip`** never runs.
+- **`requires_secrets`:** the example is skipped, not failed, unless every listed environment variable is set.
+- **`timeout`:** the run fails if it doesn't exit in time.
+
+```bash
+python -m internal.runner run hello weather                 # by slug
+python -m internal.runner run --changed-since origin/main   # what a PR changes
+python -m internal.runner run --all --dry-run               # list every maintained example
+```
+
+CI runs it twice:
+
+- **On every PR** ([`pr.yml`](../.github/workflows/pr.yml)): only the examples the PR changes. Changing the runner itself runs every maintained example.
+- **After releases** ([`release.yml`](../.github/workflows/release.yml)): every maintained example, against the newest release instead of the lockfile, when Prefect, Dagster or FastMCP sends a `repository_dispatch` event. Also weekly and on demand. Each failure opens an issue for the example's owner. Frozen demos never run here.
 
 ## Catalog
 

@@ -43,7 +43,7 @@ def write(root: Path, rel: str, text: str = "") -> Path:
 
 def folder_example(root: Path, rel: str, manifest: str = FOLDER_MANIFEST) -> None:
     write(root, f"{rel}/example.yaml", manifest)
-    for name in catalog.FOLDER_REQUIRED_FILES:
+    for name in (*catalog.FOLDER_REQUIRED_FILES, catalog.DEFAULT_ENTRYPOINT):
         write(root, f"{rel}/{name}")
 
 
@@ -187,6 +187,7 @@ def test_demos_must_pin_exact_versions(tmp_path, spec):
 
 def test_folder_missing_files(tmp_path):
     write(tmp_path, "fastmcp/servers/weather/example.yaml", FOLDER_MANIFEST)
+    write(tmp_path, "fastmcp/servers/weather/main.py")
     found = discover(tmp_path)
     (error,) = found.errors
     assert "missing pyproject.toml, uv.lock, README.md" in error
@@ -199,6 +200,46 @@ def test_folder_rejects_runner_fields(tmp_path):
     )
     (error,) = discover(tmp_path).errors
     assert "cmd only apply to single-file examples" in error
+
+
+def test_folder_entrypoint_defaults_to_main(tmp_path):
+    folder_example(tmp_path, "fastmcp/servers/weather")
+    (example,) = discover(tmp_path).examples
+    assert example.meta.entrypoint == "main.py"
+
+
+def test_folder_custom_entrypoint(tmp_path):
+    folder_example(
+        tmp_path, "fastmcp/servers/weather", FOLDER_MANIFEST + "entrypoint: server.py\n"
+    )
+    write(tmp_path, "fastmcp/servers/weather/server.py")
+    found = discover(tmp_path)
+    assert found.errors == []
+    assert found.examples[0].meta.entrypoint == "server.py"
+
+
+@pytest.mark.parametrize(
+    "entrypoint", ["server.py", "../../../outside.py", "/etc/hosts"]
+)
+def test_folder_entrypoint_must_exist_inside(tmp_path, entrypoint):
+    folder_example(
+        tmp_path,
+        "fastmcp/servers/weather",
+        FOLDER_MANIFEST + f"entrypoint: {entrypoint}\n",
+    )
+    write(tmp_path, "outside.py")  # exists, but outside the example folder
+    (error,) = discover(tmp_path).errors
+    assert "is not a file inside the folder" in error
+
+
+def test_file_example_rejects_entrypoint(tmp_path):
+    write(
+        tmp_path,
+        "prefect/hello.py",
+        FILE_EXAMPLE.replace("# tags:", "# entrypoint: other.py\n# tags:"),
+    )
+    (error,) = discover(tmp_path).errors
+    assert "entrypoint only applies to folder examples" in error
 
 
 def test_nested_folder_examples(tmp_path):
