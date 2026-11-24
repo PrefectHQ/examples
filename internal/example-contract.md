@@ -34,7 +34,7 @@ Any other `.py` file under the product folders must have a frontmatter block, so
 | `title` | yes | Text | |
 | `description` | yes | One sentence | |
 | `owner` | yes | GitHub user or team, such as `"@PrefectHQ/devrel"` | |
-| `targets` | yes | Map of package to version spec, such as `{prefect: ">=3.4"}`. Demos pin exact versions | |
+| `targets` | yes | Map of package to version spec, such as `{prefect: ">=3.4"}`. Demos must pin exact versions, such as `{prefect: "==3.4.11"}` | |
 | `product` | under `stacks/`, `learn/`, `demos/` | `prefect`, `dagster`, `fastmcp`, or a list of them | The top-level folder under `prefect/`, `dagster/`, `fastmcp/` |
 | `status` | no | `maintained` or `frozen`. Always `frozen` under `demos/` | `maintained` (`frozen` under `demos/`) |
 | `test` | no | `run`, `import-only` or `skip` | `run` |

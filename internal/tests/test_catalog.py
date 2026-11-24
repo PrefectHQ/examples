@@ -152,12 +152,13 @@ def test_stacks_accept_product_list(tmp_path):
     assert found.examples[0].meta.product == ["prefect", "fastmcp"]
 
 
+DEMO_EXAMPLE = FILE_EXAMPLE.replace('">=3.4"', '"==3.4.11"').replace(
+    "# tags:", "# product: prefect\n# tags:"
+)
+
+
 def test_demos_default_to_frozen(tmp_path):
-    write(
-        tmp_path,
-        "demos/2026-pycon-hello/hello.py",
-        FILE_EXAMPLE.replace("# tags:", "# product: prefect\n# tags:"),
-    )
+    write(tmp_path, "demos/2026-pycon-hello/hello.py", DEMO_EXAMPLE)
     found = discover(tmp_path)
     assert found.errors == []
     assert found.examples[0].meta.status == "frozen"
@@ -167,12 +168,21 @@ def test_demos_cannot_be_maintained(tmp_path):
     write(
         tmp_path,
         "demos/2026-pycon-hello.py",
-        FILE_EXAMPLE.replace(
-            "# tags:", "# product: prefect\n# status: maintained\n# tags:"
-        ),
+        DEMO_EXAMPLE.replace("# tags:", "# status: maintained\n# tags:"),
     )
     (error,) = discover(tmp_path).errors
     assert "status must be 'frozen'" in error
+
+
+@pytest.mark.parametrize("spec", [">=3.4", "==3.4.*", "~=3.4.11", "3.4.11"])
+def test_demos_must_pin_exact_versions(tmp_path, spec):
+    write(
+        tmp_path,
+        "demos/2026-pycon-hello.py",
+        DEMO_EXAMPLE.replace('"==3.4.11"', f'"{spec}"'),
+    )
+    (error,) = discover(tmp_path).errors
+    assert "targets must pin exact versions" in error
 
 
 def test_folder_missing_files(tmp_path):
