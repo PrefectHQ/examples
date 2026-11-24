@@ -12,6 +12,7 @@ import os
 from logging import Logger, LoggerAdapter
 
 import psutil
+
 from prefect import flow, get_run_logger
 
 MEGABYTE: int = 10**6

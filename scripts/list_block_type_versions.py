@@ -10,11 +10,11 @@ This can be helpful to identify older block types.
 
 import asyncio
 
-from prefect.client.orchestration import get_client
-
 # Rich is already installed as dependency of prefect
 from rich.console import Console
 from rich.table import Table
+
+from prefect.client.orchestration import get_client
 
 
 async def main():

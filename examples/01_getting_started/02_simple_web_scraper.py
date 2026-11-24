@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import requests
 from bs4 import BeautifulSoup
+
 from prefect import flow, task
 
 # ## Defining tasks
