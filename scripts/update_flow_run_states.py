@@ -10,9 +10,10 @@ from __future__ import annotations
 
 import asyncio
 
+import typer
+
 # TODO: https://github.com/PrefectHQ/prefect/issues/15957#issuecomment-2565751830
 import prefect.main  # noqa: F401
-import typer
 from prefect.client.orchestration import get_client
 from prefect.client.schemas import FlowRun, State, StateType
 from prefect.client.schemas.filters import (

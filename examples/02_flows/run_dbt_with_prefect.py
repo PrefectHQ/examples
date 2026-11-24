@@ -56,8 +56,9 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-from prefect import flow, task
 from prefect_dbt import PrefectDbtRunner, PrefectDbtSettings
+
+from prefect import flow, task
 
 DEFAULT_REPO_ZIP = (
     "https://github.com/PrefectHQ/examples/archive/refs/heads/examples-markdown.zip"

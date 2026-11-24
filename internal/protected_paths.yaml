@@ -1,0 +1,15 @@
+# Paths that other repositories load from this repo's `main` branch.
+# Moving or renaming any of these breaks them, so CI checks they still exist
+# (see `python -m internal.protected`). Who depends on each one is listed in
+# internal/DOWNSTREAM.md. Update both files together.
+#
+# `entrypoint` entries are checked as `<file>:<function>`: the file must exist
+# and define that function at module level.
+# `path` entries only need to exist.
+
+entrypoints:
+  - flows/hello_world.py:hello
+  - flows/whoami.py:whoami
+
+paths:
+  - apps/background-tasks

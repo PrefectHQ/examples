@@ -16,6 +16,7 @@ import asyncio
 from pathlib import Path
 
 import typer
+
 from prefect import __version__, flow
 
 # NOTE: The import path changed in 3.1.11
