@@ -68,7 +68,7 @@ make cimd     # signs in as fran and alice with Claude Code's client ID URL
 
 ## Optional: MotherDuck
 
-Local DuckDB is the default and nothing requires MotherDuck. Setting `ANALYTICS_DB=motherduck` adds a database-level layer: reads use a read scaling token, and only `delete_user` uses a short-lived read/write token. FastMCP decides who may call a tool, and the database token limits what the tool can do. `make stage3` ends with that second layer: a read-token connection is asked to `DELETE` and MotherDuck refuses.
+Local DuckDB is the default and nothing requires MotherDuck. Setting `ANALYTICS_DB=motherduck` adds a database-level layer: reads use a read scaling token, and only `delete_user` uses a short-lived read/write token. FastMCP decides who may call a tool, and the database token limits what the tool can do. `make stage3` ends with that second layer in either mode: a read connection is asked to `DELETE`, and the database refuses (DuckDB for a local `read_only=True` connection, MotherDuck for the read scaling token).
 
 1. Create both tokens for a MotherDuck service account, not a personal one: a read scaling token and a read/write token with a `ttl`.
 2. `cp .env.example .env` and fill in the two token variables and `ANALYTICS_DB=motherduck`. The Makefile loads `.env`; it is gitignored.

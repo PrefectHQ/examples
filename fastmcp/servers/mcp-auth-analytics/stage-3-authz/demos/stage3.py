@@ -70,20 +70,20 @@ async def main():
     for e in entries[-3:]:
         say(f"     {json.dumps(e)}")
 
-    if os.getenv("ANALYTICS_DB") == "motherduck":
-        heading("6. Second layer: the database token, not FastMCP, blocks the write")
-        sys.path.insert(0, str(ROOT / "src"))
-        from analytics_mcp import db
+    motherduck = os.getenv("ANALYTICS_DB") == "motherduck"
+    what = "read token" if motherduck else "read-only connection"
+    heading("6. Second layer: the database, not FastMCP, blocks the write")
+    sys.path.insert(0, str(ROOT / "src"))
+    from analytics_mcp import db
 
-        with db.read_connection() as con:
-            say(
-                f"   read token can read: {con.execute('SELECT count(*) FROM users').fetchone()[0]} users"
-            )
-            try:
-                con.execute("DELETE FROM events WHERE user_id = 1")
-                say("   UNEXPECTED: the read token wrote")
-            except Exception as exc:
-                say(f"   write attempt failed: {type(exc).__name__}: {str(exc)[:200]}")
+    with db.read_connection() as con:
+        users = con.execute("SELECT count(*) FROM users").fetchone()[0]
+        say(f"   {what} can read: {users} users")
+        try:
+            con.execute("DELETE FROM events WHERE user_id = 1")
+            say(f"   UNEXPECTED: the {what} wrote")
+        except Exception as exc:
+            say(f"   write attempt failed: {type(exc).__name__}: {str(exc)[:200]}")
 
 
 if __name__ == "__main__":
