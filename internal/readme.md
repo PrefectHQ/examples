@@ -2,6 +2,12 @@
 
 This directory contains internal repository and documentation management code for Prefect Examples. It does not contain examples itself, but rather utilities to test, deploy, and maintain the examples.
 
+## Examples in the product folders
+
+Examples under `prefect/`, `dagster/`, `fastmcp/`, `stacks/`, `learn/` and `demos/` follow the [example contract](example-contract.md) and run with `python -m internal.runner`, each in its own environment. See [How examples run](example-contract.md#how-examples-run).
+
+The rest of this page covers the older tooling for `examples/`, which stays in use until those examples move into `prefect/`.
+
 ## Testing Examples
 
 Prefect cares about the correctness of our examples. This directory contains tools to help test our examples to ensure they work correctly.
