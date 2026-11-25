@@ -4,10 +4,12 @@
 terraform {
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
+      version = "~> 5.0"
     }
     prefect = {
-      source = "prefecthq/prefect"
+      source  = "prefecthq/prefect"
+      version = "~> 3.4"
     }
   }
 }
@@ -66,14 +68,21 @@ resource "azurerm_storage_account" "storage_account" {
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  min_tls_version                 = "TLS1_2"
+  allow_nested_items_to_be_public = false
+
+  // Uploads must come through a private endpoint. To upload from outside the
+  // virtual network, set this to "Enabled" and add a network_rules block.
+  public_network_access = "Disabled"
 }
 
 resource "azurerm_eventgrid_system_topic" "system_topic" {
-  name                   = "azure-bucket-sensor"
-  resource_group_name    = var.resource_group_name
-  location               = var.location
-  source_arm_resource_id = azurerm_storage_account.storage_account.id
-  topic_type             = "Microsoft.Storage.StorageAccounts"
+  name                = "azure-bucket-sensor"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  source_resource_id  = azurerm_storage_account.storage_account.id
+  topic_type          = "Microsoft.Storage.StorageAccounts"
 }
 
 resource "azurerm_eventgrid_event_subscription" "event_subscription" {
@@ -86,9 +95,9 @@ resource "azurerm_eventgrid_event_subscription" "event_subscription" {
 
   delivery_property {
     header_name = "Authorization"
-    value        = "Bearer ${prefect_service_account.service_account.api_key}"
-    type         = "Static"
-    secret       = true
+    value       = "Bearer ${prefect_service_account.service_account.api_key}"
+    type        = "Static"
+    secret      = true
   }
 
   retry_policy {
