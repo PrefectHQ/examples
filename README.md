@@ -52,8 +52,8 @@ This process preserves both the narrative explanations and executable code, maki
 
 ### Prerequisites
 
-- Python 3.13+
-- [Prefect](https://docs.prefect.io/) 3.3.5+
+- Python 3.12+
+- [Prefect](https://docs.prefect.io/) 3.9.5+
 
 ### Installation
 

@@ -2,9 +2,9 @@ pytest
 jupyter
 ipython
 nbconvert
-jupytext~=1.16.1
+jupytext~=1.19.6
 pydantic>=1.10.14
-mypy==1.2.0
-ruff==0.9.6
+mypy==2.4.1
+ruff==0.17.5
 fastapi
-prefect>=3.3.5
+prefect>=3.9.5

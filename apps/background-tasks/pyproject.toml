@@ -7,9 +7,6 @@ name = "foo"
 version = "0.0.1"
 description = "a prefect-powered background task manager"
 readme = "README.md"
+license = "Apache-2.0"
 requires-python = "==3.13.*"
-dependencies = ["prefect", "marvin", "python-multipart"]
-
-
-[tool.uv.sources]
-marvin = { git = "https://github.com/PrefectHQ/marvin.git" }
+dependencies = ["prefect>=3.9.5", "marvin>=3.3.0", "python-multipart"]

@@ -23,7 +23,7 @@ logger = get_logger(__name__)
 
 @app.get("/")
 async def read_root(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 
 @app.post("/")
@@ -38,8 +38,9 @@ async def produce_structured_output_from_form(
     )
 
     return templates.TemplateResponse(
+        request,
         "partials/result.html",
-        {"request": request, "task_run_id": future.task_run_id},
+        {"task_run_id": future.task_run_id},
     )
 
 
@@ -49,9 +50,9 @@ async def get_task_status(request: Request, task_run_id: UUID) -> HTMLResponse:
     status, data = await get_task_result(task_run_id)
 
     return templates.TemplateResponse(
+        request,
         "partials/task_status.html",
         {
-            "request": request,
             "task_run_id": task_run_id,
             "status": status,
             "result": data if status == "completed" else None,

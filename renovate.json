@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>PrefectHQ/renovate-config",
+    "github>PrefectHQ/renovate-config:python",
+    "github>PrefectHQ/renovate-config:terraform",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "pep723": {
+    "managerFilePatterns": ["/^(deploy|flows|scripts)/.+\\.py$/"]
+  },
+  "packageRules": [
+    {
+      "description": "Raise the prefect version floor in every pyproject.toml, requirements file, and inline script block together, so examples target the latest release.",
+      "matchManagers": ["pep621", "pep723", "pip_requirements"],
+      "matchPackageNames": ["prefect", "prefect-dbt"],
+      "rangeStrategy": "bump",
+      "groupName": "prefect"
+    }
+  ]
+}
