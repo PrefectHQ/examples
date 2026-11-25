@@ -1,0 +1,15 @@
+[project]
+name = "mcp-auth-analytics"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb==1.5.6",
+    "fastmcp==4.2.2",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.5.0",
+]

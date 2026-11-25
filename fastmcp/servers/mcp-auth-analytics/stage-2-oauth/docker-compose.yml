@@ -1,0 +1,22 @@
+# Keycloak for stages 2 and 3.
+# Keycloak 26.6.0 is the minimum the FastMCP Keycloak provider supports. 26.7.0
+# is the minimum for CIMD with Claude clients (keycloak/keycloak#49730), and
+# CIMD itself is still an experimental feature, switched on with --features=cimd.
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.2
+    command: ["start-dev", "--import-realm", "--health-enabled=true", "--features=cimd"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_IMPORT_REALM_STRATEGY: OVERWRITE_EXISTING
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
