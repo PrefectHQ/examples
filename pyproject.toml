@@ -3,15 +3,17 @@ name = "prefect-examples"
 version = "0.1.0"
 description = "Examples of how to use Prefect"
 readme = "README.md"
-requires-python = ">=3.9"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
 
 dependencies = [
     "beautifulsoup4>=4.13.4",
     "dbt-duckdb>=1.9.3",
     "jupytext>=1.17.1",
     "pandas>=2.2.3",
-    "prefect-dbt==0.7.0rc1",
-    "prefect[dbt]>=3.0.0",
+    "prefect-dbt>=0.8.0",
+    "prefect[dbt]>=3.9.5",
     "pydantic>=2",
     "pytest>=8.3.5",
     "pyyaml>=6",

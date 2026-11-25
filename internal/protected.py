@@ -23,7 +23,7 @@ PROTECTED_FILE = Path(__file__).resolve().parent / "protected_paths.yaml"
 def _defines_function(source: str, name: str) -> bool:
     tree = ast.parse(source)
     return any(
-        isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == name
+        isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef) and node.name == name
         for node in tree.body
     )
 

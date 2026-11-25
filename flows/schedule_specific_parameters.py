@@ -1,5 +1,6 @@
 # /// script
-# dependencies = ["prefect>=3.1.16"]
+# requires-python = ">=3.12"
+# dependencies = ["prefect>=3.9.5"]
 # ///
 
 """
