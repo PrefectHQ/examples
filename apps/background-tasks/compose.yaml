@@ -7,7 +7,7 @@ services:
     ports:
       - "4200:4200"
     volumes:
-      - prefect-data:/root/.prefect
+      - prefect-data:/home/app/.prefect
     environment:
       PREFECT_SERVER_API_HOST: 0.0.0.0
 
@@ -16,7 +16,7 @@ services:
       context: .
       target: task
     volumes:
-      - ./task-storage:/task-storage
+      - task-storage:/task-storage
     depends_on:
       prefect-server:
         condition: service_started
@@ -44,7 +44,7 @@ services:
       context: .
       target: api
     volumes:
-      - ./task-storage:/task-storage
+      - task-storage:/task-storage
     ports:
       - "8000:8000"
     depends_on:
